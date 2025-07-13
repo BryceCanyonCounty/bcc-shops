@@ -5,9 +5,9 @@ Config = {
     },
     devMode = false,
     ManageShopsCommand = "manageStores", 
-    Webhook ="https://discord.com/api/webhooks/1388579380183175350/XVYeBP_GvQ6tygDEbDrYVlAkrLllOhdHiHo9hwkP2kD_MiMNI-oknvV-U8zWWVUQuPE8",
+    Webhook ="",
     WebhookTitle = 'BCC-Shops',
-    WebhookAvatar = 'https://hoinarii.ro/assets/img/logo.png',
+    WebhookAvatar = '',
 
     adminGroups = { 'admin', 'superadmin', 'moderator' },
     AllowedJobs = { 'writer', 'storemanager' },

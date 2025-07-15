@@ -49,7 +49,7 @@ function OpenNPCBuySellMenu(shopName)
             devPrint("Fetching items from DB for edit menu: " .. shopName)
 
             BccUtils.RPC:Call("bcc-shops:GetItemsForShop", { shopName = shopName }, function(success, result)
-                if not success then
+                if not success or type(result) ~= "table" then
                     Notify(result or "Failed to fetch items.", "error")
                     return
                 end
@@ -79,6 +79,7 @@ function OpenNPCBuySellMenu(shopName)
 
                 BCCShopsMainMenu:Open({ startupPage = editListPage })
             end)
+
         end)
     else
         devPrint("Player is not an admin, hiding admin options for store: " .. shopName)

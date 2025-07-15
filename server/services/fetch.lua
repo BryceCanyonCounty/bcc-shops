@@ -406,8 +406,7 @@ BccUtils.RPC:Register("bcc-shops:GetItemsForShop", function(data, cb, src)
                 return cb(false)
             end
 
-            cb(true)
-        end)
+            cb(true, itemResults)
     end)
 end)
 

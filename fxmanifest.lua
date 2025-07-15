@@ -4,9 +4,9 @@ game 'rdr3'
 
 lua54 'yes'
 
-author '@iseeyoucopy'
+author 'BCC Team @iseeyoucopy'
 description 'Advanced NPC and Player Shops System for RedM'
-version '1.0.0'
+version '1.0.1'
 
 shared_scripts {
     'config.lua',

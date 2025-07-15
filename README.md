@@ -32,6 +32,7 @@
 
 - 🧠 **Feather Menu Interface**  
   All menus are powered by `feather-menu`, offering a clean, responsive experience.
+  Most of the notifications are `FeatherMenu:Notify` , no more vorp notification.
 
 - 🌍 **Multilingual Support**  
   Fully localized in English and Romanian, with support for adding more languages using `_U("key")`.

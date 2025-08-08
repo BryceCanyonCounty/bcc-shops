@@ -1326,7 +1326,7 @@ BccUtils.RPC:Register("bcc-shops:EditItemNPCShop", function(params, cb, src)
 
         MySQL.update([[
             UPDATE bcc_shop_items
-            SET item_label = ?, buy_price = ?, sell_price = ?, category = ?,
+            SET item_label = ?, buy_price = ?, sell_price = ?, category_id = ?,
                 level_required = ?, buy_quantity = ?, sell_quantity = ?
             WHERE shop_id = ? AND item_name = ?
         ]], {

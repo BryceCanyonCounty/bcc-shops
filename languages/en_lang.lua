@@ -257,5 +257,6 @@ Locales["en_lang"] = {
     editBlipHash                    = "Blip Hash",
     editNPCModel                    = "NPC Model",
     editShowBlip                    = "Show Blip (0/1)",
-
+    price_limit_exceeded            = "The entered price exceeds the maximum allowed limit.",
+    invalidQuantity                 = "Invalid quantity.",
 }

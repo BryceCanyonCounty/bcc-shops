@@ -1,3 +1,5 @@
+local MAX_SELL_PRICE = Config.MAX_SELL_PRICE
+
 function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAccess)
     devPrint("Opening store menu for shop: " .. shopName)
     devPrint("Is player owner: " .. tostring(isOwner))
@@ -983,6 +985,8 @@ function OpenPlayerInventoryMenu(shopName, inventory, weapons)
     })
 end
 
+----function to set max sell price for items to sell
+
 function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
     devPrint("Opening item detail menu for item: " .. (item.label or "Unknown Item") .. ", Action: " .. actionType)
 
@@ -1006,6 +1010,7 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
     local inputQuantity      = 1
     local selectedCategoryId = tostring(item.category_id or "") -- default selection
 
+    -- Register header elements
     itemDetailPage:RegisterElement('header', {
         value = itemLabel,
         slot = "header"
@@ -1014,6 +1019,7 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         slot = "header"
     })
 
+    -- Price input element
     itemDetailPage:RegisterElement('input', {
         label = (actionType == 'buy' and _U('buyPrice') or _U('sellPrice')),
         slot = "content",
@@ -1025,6 +1031,7 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Updated Price: " .. inputPrice)
     end)
 
+    -- Quantity input element
     itemDetailPage:RegisterElement('input', {
         label = _U('storeQty'),
         slot = "content",
@@ -1036,6 +1043,7 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Updated Quantity: " .. inputQuantity)
     end)
 
+    -- Category dropdown element
     itemDetailPage:RegisterElement('dropdown', {
         label = _U('category'),
         slot = "content",
@@ -1046,13 +1054,22 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Selected category_id: " .. selectedCategoryId)
     end)
 
+    -- Submit button
     itemDetailPage:RegisterElement('button', {
         label = _U('submit'),
         slot = "footer"
     }, function()
+        -- Validate quantity
         if inputQuantity <= 0 then
             devPrint("Invalid quantity: " .. inputQuantity)
             VORPcore.NotifyObjective(_U('invalidQuantity'), 4000)
+            return
+        end
+
+        -- Validate price against max limit
+        if inputPrice > MAX_SELL_PRICE then
+            devPrint("Entered price exceeds maximum limit: " .. inputPrice)
+            VORPcore.NotifyObjective(_U('price_limit_exceeded'), 4000)
             return
         end
 

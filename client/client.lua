@@ -1,8 +1,9 @@
 
+local MAX_SELL_PRICE = Config.MAX_SELL_PRICE
+
 VORPcore = exports.vorp_core:GetCore()
 BccUtils = exports['bcc-utils'].initiate()
 FeatherMenu = exports['feather-menu'].initiate()
-
 CreatedBlip, CreatedNPC, playerStores, npcStores, globalNearbyShops, currentPlayers, ownedShops = {}, {}, {}, {}, {}, {},{}
 isPlayerNearStore, storesFetched = false, false
 AdminAllowed, OwnerAllowed, currentAction = nil, nil, nil

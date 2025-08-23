@@ -17,7 +17,7 @@ end
 function OpenStoreMenu(nearbyShops, filterType)
     if not nearbyShops then
         devPrint("Error: nearbyShops is nil")
-        VORPcore.NotifyObjective("No nearby shops found.", 4000)
+        Notify(_U("noNearbyShopsFound"), 4000)
         return
     end
 

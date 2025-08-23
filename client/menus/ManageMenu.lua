@@ -131,51 +131,51 @@ function OpenInitialManageMenu(stores, players)
     end)
 
     Pages.initialManagePage:RegisterElement('button', {
-        label = "Categories",
+        label = _U('CategoriesHeader'),
         slot = "content"
     }, function()
-        local CategoryPage = BCCShopsMainMenu:RegisterPage('bcc-shops:category:page')
-        CategoryPage:RegisterElement('header', {
-            value = "Categories",
+        Pages.CategoryPage = BCCShopsMainMenu:RegisterPage('bcc-shops:category:page')
+        Pages.CategoryPage:RegisterElement('header', {
+            value = _U('CategoriesHeader'),
             slot = "header"
         })
 
-        CategoryPage:RegisterElement('button', {
-            label = "Create Category",
+        Pages.CategoryPage:RegisterElement('button', {
+            label = _U('createCategory'),
             slot = "content"
         }, function()
             OpenCreateCategoryMenu()
         end)
 
-        CategoryPage:RegisterElement('button', {
-            label = "Edit Category",
+        Pages.CategoryPage:RegisterElement('button', {
+            label = _U('editCategory'),
             slot = "content"
         }, function()
             OpenEditCategoryMenu()
         end)
 
-        CategoryPage:RegisterElement('button', {
-            label = "Delete Category",
+        Pages.CategoryPage:RegisterElement('button', {
+            label = _U('deleteCategory'),
             slot = "content"
         }, function()
             OpenDeleteCategoryMenu()
         end)
 
-        CategoryPage:RegisterElement('line', {
+        Pages.CategoryPage:RegisterElement('line', {
             slot = "footer",
             style = {}
         })
-        CategoryPage:RegisterElement('button', {
+        Pages.CategoryPage:RegisterElement('button', {
             label = _U('backButton'),
             slot = "footer"
         }, function()
             Pages.initialManagePage:RouteTo()
         end)
-        CategoryPage:RegisterElement('bottomline', {
+        Pages.CategoryPage:RegisterElement('bottomline', {
             slot = "footer",
             style = {}
         })
-        BCCShopsMainMenu:Open({ startupPage = CategoryPage })
+        BCCShopsMainMenu:Open({ startupPage = Pages.CategoryPage })
     end)
 
     Pages.initialManagePage:RegisterElement('line', {
@@ -256,11 +256,7 @@ function OpenDeleteStoresMenu()
                 OpenDeleteNPCStoresMenu()
             else
                 devPrint("No NPC shops returned.")
-                FeatherMenu:Notify({
-                    message = _U('noNPCShopFound'),
-                    type = "warning",
-                    autoClose = 3000
-                })
+                Notify(_U('noNPCShopFound'), "warning", 4000)
             end
         end)
     end)
@@ -278,11 +274,7 @@ function OpenDeleteStoresMenu()
             OpenDeletePlayerStoresMenu()
         else
             devPrint("No player shops returned.")
-            FeatherMenu:Notify({
-                message = _U('noPlayerShopFound'),
-                type = "warning",
-                autoClose = 3000
-            })
+            FeatherMenu:Notify(_U('noPlayerShopFound'), "warning", 4000)
         end
     end)
 
@@ -401,12 +393,15 @@ function OpenDeleteConfirmationMenu(storeId, shopName, storeType)
 end
 
 function OpenCreateCategoryMenu()
-    local createPage = BCCShopsMainMenu:RegisterPage("bcc-shops:createCategory")
+    Pages.createCatPage = BCCShopsMainMenu:RegisterPage("bcc-shops:createCategory")
 
-    createPage:RegisterElement('header', { value = _U('createCategory'), slot = "header" })
+    Pages.createCatPage:RegisterElement('header', {
+        value = _U('createCategory'),
+        slot = "header"
+    })
 
     local newName = ""
-    createPage:RegisterElement('input', {
+    Pages.createCatPage:RegisterElement('input', {
         label = _U('categoryName'),
         slot = "content",
         type = "text",
@@ -415,54 +410,74 @@ function OpenCreateCategoryMenu()
         newName = data.value
     end)
 
-    createPage:RegisterElement('button', {
+    Pages.createCatPage:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
+
+    Pages.createCatPage:RegisterElement('button', {
         label = _U("submitChanges"),
         slot = "footer"
     }, function()
         if newName and newName:len() > 0 then
             BccUtils.RPC:Call("bcc-shops:CreateCategory", { name = newName }, function(success)
                 if success then
-                    Notify(_U("categoryCreated"), "success")
+                    Notify(_U("categoryCreated"), "success", 4000)
                 else
-                    Notify(_U("categoryCreateFailed"), "error")
+                    Notify(_U("categoryCreateFailed"), "error", 4000)
                 end
             end)
         end
     end)
 
-    createPage:RegisterElement('button', {
+    Pages.createCatPage:RegisterElement('button', {
         label = _U('backButton'),
         slot = "footer"
     }, function()
-        BCCShopsMainMenu:Close()
+        Pages.CategoryPage:RouteTo()
     end)
 
-    BCCShopsMainMenu:Open({ startupPage = createPage })
+    Pages.createCatPage:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
+
+    BCCShopsMainMenu:Open({ startupPage = Pages.createCatPage })
 end
 
 function OpenEditCategoryMenu()
-    local editPage = BCCShopsMainMenu:RegisterPage("bcc-shops:editCategory")
-    editPage:RegisterElement('header', { value = _U('editCategory'), slot = "header" })
+    Pages.editCatPage = BCCShopsMainMenu:RegisterPage("bcc-shops:editCategory")
+    Pages.editCatPage:RegisterElement('header', {
+        value = _U('editCategory'),
+        slot = "header"
+    })
 
     local categories = BccUtils.RPC:CallAsync("bcc-shops:GetAllCategories", {})
 
     for _, cat in ipairs(categories) do
-        editPage:RegisterElement('button', {
-            label = cat.name,
+        Pages.editCatPage:RegisterElement('button', {
+            label = cat.label,
             slot = "content"
         }, function()
             local renamePage = BCCShopsMainMenu:RegisterPage("bcc-shops:renameCategory")
-            local newLabel = cat.name
+            renamePage:RegisterElement('header', {
+                value = _U('renameCategory'),
+                slot = "header"
+            })
+            local newLabel = cat.label
 
             renamePage:RegisterElement('input', {
                 label = _U('categoryName'),
                 slot = "content",
                 type = "text",
-                default = cat.name
+                default = cat.label
             }, function(data)
                 newLabel = data.value
             end)
-
+            renamePage:RegisterElement('line', {
+                slot = "footer",
+                style = {}
+            })
             renamePage:RegisterElement('button', {
                 label = _U("submitChanges"),
                 slot = "footer"
@@ -472,9 +487,10 @@ function OpenEditCategoryMenu()
                     name = newLabel
                 }, function(success)
                     if success then
-                        Notify(_U("categoryUpdated"), "success")
+                        Pages.editCatPage:RouteTo()
+                        Notify(_U("ccategoryUpdatedSuccess"), "success", 4000)
                     else
-                        Notify(_U("categoryUpdateFailed"), "error")
+                        Notify(_U("categoryUpdatedFail"), "error", 4000)
                     end
                 end)
             end)
@@ -483,21 +499,36 @@ function OpenEditCategoryMenu()
                 label = _U('backButton'),
                 slot = "footer"
             }, function()
-                editPage:RouteTo()
+                Pages.editCatPage:RouteTo()
             end)
+
+            renamePage:RegisterElement('bottomline', {
+                slot = "footer",
+                style = {}
+            })
 
             BCCShopsMainMenu:Open({ startupPage = renamePage })
         end)
     end
 
-    editPage:RegisterElement('button', {
+    Pages.editCatPage:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
+
+    Pages.editCatPage:RegisterElement('button', {
         label = _U('backButton'),
         slot = "footer"
     }, function()
-        BCCShopsMainMenu:Close()
+        Pages.CategoryPage:RouteTo()
     end)
 
-    BCCShopsMainMenu:Open({ startupPage = editPage })
+    Pages.editCatPage:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
+
+    BCCShopsMainMenu:Open({ startupPage = Pages.editCatPage })
 end
 
 function OpenEditShopPage(shop)
@@ -541,10 +572,10 @@ function OpenEditShopPage(shop)
 
         BccUtils.RPC:Call("bcc-shops:EditShop", edits, function(success)
             if success then
-                Notify(_U("itemUpdated"), "success")
-                Pages.initialManageStores:RouteTo()
+                Notify(_U("itemUpdated"), "success", 4000)
+                Pages.CategoryPage:RouteTo()
             else
-                Notify(_U("itemUpdatedFail"), "error")
+                Notify(_U("itemUpdatedFail"), "error", 4000)
             end
         end)
     end)
@@ -554,7 +585,7 @@ function OpenEditShopPage(shop)
         label = _U("backButton"),
         slot = "footer"
     }, function()
-       Pages.initialManageStores:RouteTo()
+        Pages.CategoryPage:RouteTo()
     end)
 
     BCCShopsMainMenu:Open({ startupPage = Pages.editPage })
@@ -562,32 +593,64 @@ end
 
 -- Open Delete Category Menu
 function OpenDeleteCategoryMenu()
-    local deletePage = BCCShopsMainMenu:RegisterPage("bcc-shops:deleteCategory")
-    deletePage:RegisterElement('header', { value = _U('deleteCategory'), slot = "header" })
+    local deleteCatPage = BCCShopsMainMenu:RegisterPage("bcc-shops:deleteCategory")
+    deleteCatPage:RegisterElement('header', {
+        value = _U('deleteCategory'),
+        slot = "header"
+    })
 
     local categories = BccUtils.RPC:CallAsync("bcc-shops:GetAllCategories", {})
 
     for _, cat in ipairs(categories) do
-        deletePage:RegisterElement('button', {
+        deleteCatPage:RegisterElement('button', {
             label = cat.name,
             slot = "content"
         }, function()
-            BccUtils.RPC:Call("bcc-shops:DeleteCategory", { id = cat.id }, function(success)
-                if success then
-                    Notify(_U("categoryDeleted"), "success")
-                else
-                    Notify(_U("categoryDeleteFailed"), "error")
-                end
+            local confirmDeletePage = BCCShopsMainMenu:RegisterPage("bcc-shops:confirmDeleteCategory")
+
+            confirmDeletePage:RegisterElement('header', {
+                value = _U('confirmDeleteCategory'),
+                slot = "header"
+            })
+            confirmDeletePage:RegisterElement("button", {
+                label = _U("yes"),
+                slot = "content"
+            }, function()
+                BccUtils.RPC:Call("bcc-shops:DeleteCategory", { id = cat.id }, function(success)
+                    if success then
+                        Notify(_U("categoryDeletedSuccess"), "success", 4000)
+                        deleteCatPage:RouteTo()
+                    else
+                        Notify(_U("categoryDeletedFail"), "error", 4000)
+                    end
+                end)
             end)
+            confirmDeletePage:RegisterElement("button", {
+                label = _U("no"),
+                slot = "content"
+            }, function()
+                deleteCatPage:RouteTo()
+            end)
+            BCCShopsMainMenu:Open({ startupPage = confirmDeletePage })
         end)
     end
 
-    deletePage:RegisterElement('button', {
+    deleteCatPage:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
+
+    deleteCatPage:RegisterElement('button', {
         label = _U('backButton'),
         slot = "footer"
     }, function()
-        BCCShopsMainMenu:Back()
+        Pages.initialManageStores:RouteTo()
     end)
 
-    BCCShopsMainMenu:Open({ startupPage = deletePage })
+    deleteCatPage:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
+
+    BCCShopsMainMenu:Open({ startupPage = deleteCatPage })
 end

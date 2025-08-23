@@ -33,7 +33,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
         })
 
         playerbuySellPage:RegisterElement('button', {
-            label = "Administreaza Magazin",
+            label = _U("manageStore"),
             slot = "footer"
         }, function()
             local playerManagePage = BCCShopsMainMenu:RegisterPage('bcc-shops:player:manage:page')
@@ -136,15 +136,15 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                 action = "add"
                             }, function(success)
                                 if success then
-                                    Notify(_U("moneyAddedToLedger"), "success")
+                                    Notify(_U("moneyAddedToLedger"), "success", 4000)
                                     managePlayerLedger:RouteTo()
                                     addAmount = ""
                                 else
-                                    Notify(_U("failedToUpdateLedger"), "error")
+                                    Notify(_U("failedToUpdateLedger"), "error", 4000)
                                 end
                             end)
                         else
-                            Notify(_U("invalidAmountToAdd"), "warning")
+                            Notify(_U("invalidAmountToAdd"), "warning", 4000)
                         end
                     end)
 
@@ -195,15 +195,15 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                 action = "remove"
                             }, function(success)
                                 if success then
-                                    Notify(_U("moneyRemovedFromLedger"), "success")
+                                    Notify(_U("moneyRemovedFromLedger"), "success", 4000)
                                     managePlayerLedger:RouteTo()
                                     removeAmount = ""
                                 else
-                                    Notify(_U("failedToUpdateLedger"), "error")
+                                    Notify(_U("failedToUpdateLedger"), "error", 4000)
                                 end
                             end)
                         else
-                            Notify(_U("invalidAmountToRemove"), "warning")
+                            Notify(_U("invalidAmountToRemove"), "warning", 4000)
                         end
                     end)
 
@@ -253,7 +253,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     BccUtils.RPC:Call("bcc-shops:FetchOnlinePlayers", {}, function(players)
                         if not players or #players == 0 then
-                            Notify(_U("noOnlinePlayersFound"), "warning")
+                            Notify(_U("noOnlinePlayersFound"), "warning", 4000)
                             return
                         end
 
@@ -280,7 +280,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                 }, function(success)
                                     devPrint("Access result: " .. tostring(success))
                                     if success then
-                                        Notify(_U("accessGranted"), "success")
+                                        Notify(_U("accessGranted"), "success", 4000)
                                         BCCShopsMainMenu:Close()
                                     end
                                 end)
@@ -311,7 +311,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                     BccUtils.RPC:Call("bcc-shops:GetAccessList", { shopName = shopName }, function(results)
                         if not results or #results == 0 then
                             devPrint("[CLIENT] No players with access returned.")
-                            Notify(_U("noPlayersWithAccess"), "warning")
+                            Notify(_U("noPlayersWithAccess"), "warning", 4000)
                             return
                         end
 
@@ -361,14 +361,14 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                                     characterId = selectedCharacterId
                                                 }, function(success)
                                                     if success then
-                                                        Notify(_U("accessRemovedSuccessfully"), "success")
+                                                        Notify(_U("accessRemovedSuccessfully"), "success", 4000)
                                                         managePlayerAccess:RouteTo()
                                                     else
-                                                        Notify(_U("failedToRemoveAccess"), "error")
+                                                        Notify(_U("failedToRemoveAccess"), "error", 4000)
                                                     end
                                                 end)
                                             else
-                                                Notify("Shop not found.", "warning")
+                                                Notify("Shop not found.", "warning", 4000)
                                             end
                                         end)
                                 end)
@@ -444,7 +444,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                     slot = "content"
                 }, function()
                     if not webhookValue or webhookValue == "" then
-                        Notify(_U("invalidWebhookURL"), "error")
+                        Notify(_U("invalidWebhookURL"), "error", 4000)
                         return
                     end
 
@@ -454,9 +454,9 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                     }, function(success)
                         if success then
                             BCCShopsMainMenu:Close()
-                            Notify(_U("webhookUpdated"), "success")
+                            Notify(_U("webhookUpdated"), "success", 4000)
                         else
-                            Notify(_U("failedToUpdateWebhook"), "error")
+                            Notify(_U("failedToUpdateWebhook"), "error", 4000)
                         end
                     end)
                 end)
@@ -478,7 +478,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
             end)
 
             playerManagePage:RegisterElement('button', {
-                label = "Administreaza Blip",
+                label = _U("manageBlip"),
                 slot = "content"
             }, function()
                 local managePlayerBlip = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerBlip:page')
@@ -489,7 +489,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                 })
 
                 managePlayerBlip:RegisterElement('button', {
-                    label = "Enable blip",
+                    label = _U("enableBlip"),
                     slot = "content"
                 }, function()
                     local enableShopBlip = BCCShopsMainMenu:RegisterPage('bcc-shops:enableShopBlip:page')
@@ -500,15 +500,15 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                     })
 
                     enableShopBlip:RegisterElement('button', {
-                        label = "✅ Show Blip",
+                        label = _U("showBlip"),
                         slot = "content"
                     }, function()
                         BccUtils.RPC:Call("bcc-shops:SetShopBlipEnabled", {
                             shopName = shopName,
                             enabled = true
-                        }, function(success, msg)
+                        }, function(success)
                             if success then
-                                Notify("Blip enabled", "success")
+                                Notify(_U("blipEnabled"), "success", 4000)
 
                                 for i, blipObj in ipairs(CreatedBlip) do
                                     if blipObj.name == shopName then
@@ -526,21 +526,21 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                     table.insert(CreatedBlip, newBlip)
                                 end
                             else
-                                Notify("Failed to enable blip: " .. (msg or "unknown"), "error")
+                                Notify(_U('failedToEnableBlip'), 'error', 4000)
                             end
                         end)
                     end)
                     
                     enableShopBlip:RegisterElement('button', {
-                        label = "❌ Hide Blip",
+                        label = _U('hideBlip'),
                         slot = "content"
                     }, function()
                         BccUtils.RPC:Call("bcc-shops:SetShopBlipEnabled", {
                             shopName = shopName,
                             enabled = false
-                        }, function(success, msg)
+                        }, function(success)
                             if success then
-                                Notify("Blip disabled", "warning")
+                                Notify(_U('blipDisabled'), "warning", 4000)
 
                                 -- Remove blip
                                 for i, blipObj in ipairs(CreatedBlip) do
@@ -551,7 +551,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                     end
                                 end
                             else
-                                Notify("Failed to disable blip: " .. (msg or "unknown"), "error")
+                                Notify(_U("failedToDisableBlip"), "error", 4000)
                             end
                         end)
                     end)
@@ -572,7 +572,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
 
                 managePlayerBlip:RegisterElement('button', {
-                    label = "Change blip",
+                    label = _U('changeBlip'),
                     slot = "content"
                 }, function()
                     local changeShopBlip = BCCShopsMainMenu:RegisterPage('bcc-shops:changeShopBlip:page')
@@ -602,9 +602,9 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                             BccUtils.RPC:Call("bcc-shops:SetPlayerShopBlip", {
                                 shopName = shopName,
                                 blipHash = selectedBlipHash
-                            }, function(success, msg)
+                            }, function(success)
                                 if success then
-                                    Notify(_U("blipUpdated"), "success")
+                                    Notify(_U("blipUpdated"), "success", 4000)
 
                                     -- 🔄 Remove old blip for this shop
                                     for i, blipObj in ipairs(CreatedBlip) do
@@ -625,7 +625,7 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                     end
                                     managePlayerBlip:RouteTo()
                                 else
-                                    Notify(_U("blipUpdateFailed") .. ": " .. (msg or "unknown"), "error")
+                                    Notify(_U("blipUpdateFailed"), "error", 4000)
                                 end
                             end)
                         end)
@@ -779,7 +779,7 @@ function OpenCreatePlayerStoreMenu(players, storeDetails)
         storeDetails.pos_z = coords.z
         storeDetails.storeHeading = heading
 
-        Notify(_U('coordinatesSet') .. tostring(coords) .. " | H: " .. math.floor(heading), "info")
+        Notify(_U('coordinatesSet') .. tostring(coords) .. " | H: " .. math.floor(heading), "info", 4000)
         devPrint("Coordinates & Heading set: " .. tostring(coords) .. " Heading: " .. heading)
     end)
 
@@ -794,17 +794,17 @@ function OpenCreatePlayerStoreMenu(players, storeDetails)
                 BccUtils.RPC:Call("bcc-shops:createplayershop", storeDetails, function(success)
                     if success then
                         BCCShopsMainMenu:Close()
-                        Notify(_U('shopCreatedSuccess'), "success")
+                        Notify(_U('shopCreatedSuccess'), "success", 4000)
                     else
-                        Notify(_U('shopCreatedFail'), "error")
+                        Notify(_U('shopCreatedFail'), "error", 4000)
                     end
                 end)
             else
-                Notify(_U('pleaseSetLocation'), "warning")
+                Notify(_U('pleaseSetLocation'), "warning", 4000)
                 devPrint("Location not set")
             end
         else
-            Notify(_U('provideAllStoreDetails'), "warning")
+            Notify(_U('provideAllStoreDetails'), "warning", 4000)
             devPrint("Store details incomplete: shopName=" .. shopName .. ", ownerId=" .. storeDetails.ownerId)
         end
     end)
@@ -836,7 +836,7 @@ function SelectOwner(players)
     for _, player in ipairs(players) do
         playerListPage:RegisterElement('button', { label = player.name, slot = "content" }, function()
             local ownerId = player.id
-            Notify("Owner selected: " .. player.name, "success")
+            Notify("Owner selected: " .. player.name, "success", 4000)
             devPrint("Owner selected: " .. player.name .. ", ID: " .. ownerId)
             OpenCreatePlayerStoreMenu(players, { ownerId = ownerId })
         end)
@@ -985,8 +985,6 @@ function OpenPlayerInventoryMenu(shopName, inventory, weapons)
     })
 end
 
-----function to set max sell price for items to sell
-
 function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
     devPrint("Opening item detail menu for item: " .. (item.label or "Unknown Item") .. ", Action: " .. actionType)
 
@@ -998,7 +996,7 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
             table.insert(categoryOptions, { text = cat.text or cat.label or "unknown", value = tostring(cat.value) })
         end
     else
-        Notify("No categories found in database!", "error")
+        Notify("No categories found in database!", "error", 4000)
         return
     end
 
@@ -1010,7 +1008,6 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
     local inputQuantity      = 1
     local selectedCategoryId = tostring(item.category_id or "") -- default selection
 
-    -- Register header elements
     itemDetailPage:RegisterElement('header', {
         value = itemLabel,
         slot = "header"
@@ -1019,7 +1016,6 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         slot = "header"
     })
 
-    -- Price input element
     itemDetailPage:RegisterElement('input', {
         label = (actionType == 'buy' and _U('buyPrice') or _U('sellPrice')),
         slot = "content",
@@ -1031,7 +1027,6 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Updated Price: " .. inputPrice)
     end)
 
-    -- Quantity input element
     itemDetailPage:RegisterElement('input', {
         label = _U('storeQty'),
         slot = "content",
@@ -1043,7 +1038,6 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Updated Quantity: " .. inputQuantity)
     end)
 
-    -- Category dropdown element
     itemDetailPage:RegisterElement('dropdown', {
         label = _U('category'),
         slot = "content",
@@ -1054,25 +1048,20 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Selected category_id: " .. selectedCategoryId)
     end)
 
-    -- Submit button
     itemDetailPage:RegisterElement('button', {
         label = _U('submit'),
         slot = "footer"
     }, function()
-        -- Validate quantity
         if inputQuantity <= 0 then
             devPrint("Invalid quantity: " .. inputQuantity)
-            VORPcore.NotifyObjective(_U('invalidQuantity'), 4000)
+            Notify(_U('invalidQuantity'), "error", 4000)
             return
         end
-
-        -- Validate price against max limit
         if inputPrice > MAX_SELL_PRICE then
             devPrint("Entered price exceeds maximum limit: " .. inputPrice)
-            VORPcore.NotifyObjective(_U('price_limit_exceeded'), 4000)
+            Notify(_U('price_limit_exceeded'), "error", 4000)
             return
         end
-
         -- Weapon-specific handling
         if item.is_weapon == 1 then
             local weaponPayload = {
@@ -1093,10 +1082,10 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
             devPrint("Sending weapon to shop: " .. json.encode(weaponPayload))
             BccUtils.RPC:Call("bcc-shops:AddWeaponItem", weaponPayload, function(success, msg)
                 if success then
-                    Notify(_U("weaponAddedSuccess"), "success")
+                    Notify(_U("weaponAddedSuccess"), "success", 4000)
                     BCCShopsMainMenu:Close()
                 else
-                    Notify(msg or _U("weaponAddedFail"), "error")
+                    Notify(msg or _U("weaponAddedFail"), "error", 4000)
                 end
             end)
             return
@@ -1116,10 +1105,10 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
             devPrint("Adding buy item: " .. json.encode(payload))
             BccUtils.RPC:Call("bcc-shops:AddBuyItem", payload, function(success)
                 if success then
-                    Notify(_U("buyItemAdded"), "success")
+                    Notify(_U("buyItemAdded"), "success", 4000)
                     BCCShopsMainMenu:Close()
                 else
-                    Notify(_U("buyItemAddFail"), "error")
+                    Notify(_U("buyItemAddFail"), "error", 4000)
                 end
             end)
         else
@@ -1127,10 +1116,10 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
             devPrint("Adding sell item: " .. json.encode(payload))
             BccUtils.RPC:Call("bcc-shops:AddSellItem", payload, function(success)
                 if success then
-                    Notify(_U("sellItemAdded"), "success")
+                    Notify(_U("sellItemAdded"), "success", 4000)
                     BCCShopsMainMenu:Close()
                 else
-                    Notify(_U("sellItemAddFail"), "error")
+                    Notify(_U("sellItemAddFail"), "error", 4000)
                 end
             end)
         end
@@ -1151,7 +1140,7 @@ function OpenRemovePlayerItemMenu(shopName)
 
     local result = BccUtils.RPC:CallAsync("bcc-shops:FetchShopItems", { shopName = shopName })
     if not result or (not result.items and not result.weapons) then
-        Notify(_U("failedToFetchShopItems"), "error")
+        Notify(_U("failedToFetchShopItems"), "error", 4000)
         return
     end
 
@@ -1175,7 +1164,7 @@ function OpenRemovePlayerItemMenu(shopName)
     end
 
     if #categoryList == 0 then
-        Notify(_U("noItemsAvailable"), "warning")
+        Notify(_U("noItemsAvailable"), "warning", 4000)
         return
     end
 
@@ -1225,8 +1214,7 @@ function OpenRemovePlayerItemMenu(shopName)
                 html = html,
                 slot = "content"
             }, function()
-                RequestRemoveQuantity(shopName, itemName, entry.buy_quantity, entry.sell_quantity, entry.price,
-                    entry.sell_price, type == "weapon")
+                RequestRemoveQuantity(shopName, itemName, entry.buy_quantity, entry.sell_quantity, entry.price, entry.sell_price, type == "weapon")
             end)
         end
 
@@ -1300,7 +1288,7 @@ function RequestRemoveQuantity(shopName, itemName, maxBuyQuantity, maxSellQuanti
         if inputQty and inputQty > 0 then
             quantity = inputQty
         else
-            Notify(_U("invalidQuantityInput"), "error")
+            Notify(_U("invalidQuantityInput"), "error", 4000)
         end
     end)
 
@@ -1319,17 +1307,17 @@ function RequestRemoveQuantity(shopName, itemName, maxBuyQuantity, maxSellQuanti
                 itemName = itemName,
                 quantity = quantity,
                 isBuy = true
-            }, function(success, msg)
+            }, function(success)
                 if success then
-                    Notify(_U("itemRemovedSuccessfully"), "success")
+                    Notify(_U("itemRemovedSuccessfully"), "success", 4000)
                 else
-                    Notify(_U("failedToRemoveItem") .. (msg or _U("unknownError")), "error")
+                    Notify(_U("failedToRemoveItem") .. (_U("unknownError")), "error", 4000)
                 end
                 OpenRemovePlayerItemMenu(shopName)
             end)
             BCCShopsMainMenu:Close()
         else
-            Notify(_U("quantityExceedsBuyStock"), "error")
+            Notify(_U("quantityExceedsBuyStock"), "error", 4000)
         end
     end)
 
@@ -1343,11 +1331,11 @@ function RequestRemoveQuantity(shopName, itemName, maxBuyQuantity, maxSellQuanti
                 itemName = itemName,
                 quantity = quantity,
                 isBuy = false
-            }, function(success, msg)
+            }, function(success)
                 if success then
-                    Notify(_U("itemRemovedSuccessfully"), "success")
+                    Notify(_U("itemRemovedSuccessfully"), "success", 4000)
                 else
-                    Notify(_U("failedToRemoveItem") .. (msg or _U("unknownError")), "error")
+                    Notify(_U("failedToRemoveItem") .. (_U("unknownError")), "error")
                 end
                 OpenRemovePlayerItemMenu(shopName)
             end)
@@ -1438,10 +1426,10 @@ function OpenAddItemMenu(shopName, item, inventoryType)
                 levelRequired = item.level_required
             }, function(success)
                 if success then
-                    Notify("Sell item added to store!", "success")
+                    Notify(_U("sellItemAddedToStore"), "success", 4000)
                     BCCShopsMainMenu:Close()
                 else
-                    Notify("Failed to add sell item.", "error")
+                    Notify(_U("failedToAddSellItem"), "error", 4000)
                 end
             end)
         end

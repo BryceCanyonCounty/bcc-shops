@@ -65,7 +65,7 @@ function FetchPlayersForOwnerSelection()
             -- Replace this with your menu or logic handler
             SelectOwner(players)
         else
-            Notify("Failed to fetch players.", "error")
+            Notify(_U("failedToFetchPlayers"), "error", 4000)
         end
     end)
 end

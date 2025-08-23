@@ -854,9 +854,10 @@ BccUtils.RPC:Register("bcc-shops:AddItemNPCShop", function(params, cb, src)
 
     -- Optional: Validate if category exists
     local catCheck = MySQL.scalar.await(
-        'SELECT 1 FROM bcc_shop_categories WHERE id = ? AND type = "item"',
+        'SELECT 1 FROM bcc_shop_categories WHERE id = ?',
         { categoryId }
     )
+
     if not catCheck then
         devPrint("[ERROR] Category ID not found in database: " .. categoryId)
         return cb(false, "Category not found")
@@ -1326,7 +1327,7 @@ BccUtils.RPC:Register("bcc-shops:EditItemNPCShop", function(params, cb, src)
 
         MySQL.update([[
             UPDATE bcc_shop_items
-            SET item_label = ?, buy_price = ?, sell_price = ?, category_id = ?,
+            SET item_label = ?, buy_price = ?, sell_price = ?, category = ?,
                 level_required = ?, buy_quantity = ?, sell_quantity = ?
             WHERE shop_id = ? AND item_name = ?
         ]], {
@@ -1350,15 +1351,15 @@ BccUtils.RPC:Register("bcc-shops:EditItemNPCShop", function(params, cb, src)
 end)
 
 BccUtils.RPC:Register("bcc-shops:EditWeaponItem", function(params, cb, src)
-    local shopName = params.shopName
-    local weaponName = params.weaponName
-    local weaponLabel = params.weaponLabel
-    local buyPrice = params.buyPrice
-    local sellPrice = params.sellPrice
-    local category = params.category
+    local shopName      = params.shopName
+    local weaponName    = params.weaponName
+    local weaponLabel   = params.weaponLabel
+    local buyPrice      = params.buyPrice
+    local sellPrice     = params.sellPrice
+    local category      = params.category
     local levelRequired = params.levelRequired
-    local customDesc = params.customDesc or ''
-    local weaponInfo = params.weaponInfo or '{}'
+    local buyQty  = tonumber(params.buy_quantity)
+    local sellQty = tonumber(params.sell_quantity)
 
     if not shopName or not weaponName then
         cb(false, "Shop name or weapon name is missing")
@@ -1375,12 +1376,27 @@ BccUtils.RPC:Register("bcc-shops:EditWeaponItem", function(params, cb, src)
 
         MySQL.update([[
             UPDATE bcc_shop_weapon_items
-            SET weapon_label = ?, buy_price = ?, sell_price = ?, category = ?, level_required = ?, custom_desc = ?, weapon_info = ?
+            SET
+                weapon_label   = ?,
+                buy_price      = ?,
+                sell_price     = ?,
+                category       = ?,
+                level_required = ?,
+                buy_quantity   = COALESCE(?, buy_quantity),
+                sell_quantity  = COALESCE(?, sell_quantity)
             WHERE shop_id = ? AND weapon_name = ?
         ]], {
-            weaponLabel, buyPrice, sellPrice, category, levelRequired, customDesc, weaponInfo, shopId, weaponName
+            weaponLabel,
+            buyPrice,
+            sellPrice,
+            category,
+            levelRequired,
+            buyQty,
+            sellQty,
+            shopId,
+            weaponName
         }, function(rowsChanged)
-            if rowsChanged > 0 then
+            if rowsChanged and rowsChanged > 0 then
                 cb(true)
             else
                 cb(false, "Failed to update weapon item.")

@@ -36,7 +36,7 @@ BccUtils.RPC:Register("bcc-shops:ModifyLedger", function(params, cb, src)
     if action == "add" then
         if character.money < amount then
             devPrint("Not enough player money. Has: " .. character.money .. ", needs: " .. amount)
-            NotifyClient(src, _U("notEnoughMoney"), "error")
+            NotifyClient(src, _U("notEnoughMoney"), "error", 4000)
             return cb(false)
         end
 
@@ -46,7 +46,7 @@ BccUtils.RPC:Register("bcc-shops:ModifyLedger", function(params, cb, src)
     elseif action == "remove" then
         if currentLedger < amount then
             devPrint("Not enough money in ledger to withdraw.")
-            NotifyClient(src, _U("notEnoughLedgerFunds"), "error")
+            NotifyClient(src, _U("notEnoughLedgerFunds"), "error", 4000)
             return cb(false)
         end
 
@@ -99,6 +99,6 @@ BccUtils.RPC:Register("bcc-shops:ModifyLedger", function(params, cb, src)
     )
 
     devPrint("Ledger updated successfully. New Balance: " .. currentLedger)
-    NotifyClient(src, _U("ledgerUpdated"), "success")
+    NotifyClient(src, _U("ledgerUpdated"), "success", 4000)
     cb(true)
 end)

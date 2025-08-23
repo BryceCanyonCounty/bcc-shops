@@ -1,19 +1,37 @@
-function Notify(message, type, position, transition, icon)
-    FeatherMenu:Notify({
-        message = message,
-        type = type or "info",               -- success, warning, error, default
-        hideProgressBar = false,             -- hide the progressbar (true/false)
-        transition = transition or "slide",  -- bounce, flip, slide, zoom
-        autoClose = 6000,
-        position = position or "top-center", --top-left top-center top-right bottom-left bottom-center bottom-right
-        style = {},                          --	CSS style overrides
-        toastStyle = {},                     -- CSS style overrides
-        progressStyle = {},                  -- CSS style overrides
-        icon = icon or true                  -- Can copy/paste emoji here. Or set to true for default icons.
-    }, function(data)
-        --devPrint("[NOTIFY] " .. data.type .. " - Notification ID: " .. tostring(data.id))
-    end)
+function Notify(message, typeOrDuration, maybeDuration)
+    local notifyType = "info"
+    local notifyDuration = 4000
+
+    -- Detect which argument is which
+    if type(typeOrDuration) == "string" then
+        notifyType = typeOrDuration
+        notifyDuration = tonumber(maybeDuration) or 4000
+    elseif type(typeOrDuration) == "number" then
+        notifyDuration = typeOrDuration
+    end
+
+    if Config.Notify == "feather-menu" then
+        FeatherMenu:Notify({
+            message = message,
+            type = notifyType,
+            autoClose = notifyDuration,
+            position = "top-center",
+            transition = "slide",
+            icon = true,
+            hideProgressBar = false,
+            rtl = false,
+            style = {},
+            toastStyle = {},
+            progressStyle = {}
+        })
+    elseif Config.Notify == "vorp-core" then
+        -- Only message and duration supported
+        VORPcore.NotifyRightTip(message, notifyDuration)
+    else
+        print("^1[Notify] Invalid Config.Notify: " .. tostring(Config.Notify))
+    end
 end
-BccUtils.RPC:Register("bcc-shops:NotifyClient", function(data)
-    Notify(data.message, data.type)
+
+BccUtils.RPC:Register("bcc-shop:NotifyClient", function(data)
+    Notify(data.message, data.type, data.duration)
 end)

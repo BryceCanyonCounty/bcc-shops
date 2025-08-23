@@ -2,7 +2,7 @@ function SellMenu(shopName)
     devPrint("🟢 Entered SellMenu for shop: " .. tostring(shopName))
     BccUtils.RPC:Call("bcc-shops:GetShopItems", { shopName = shopName }, function(data)
         if (not data.items or next(data.items) == nil) and (not data.weapons or next(data.weapons) == nil) then
-            Notify(_U("shop_no_items_found_tosell"), "error")
+            Notify(_U("shop_no_items_found_tosell"), "error", 4000)
             return
         end
 
@@ -40,7 +40,7 @@ function SellMenu(shopName)
         table.sort(validCategories)
 
         if #validCategories == 0 then
-            Notify(_U("shop_no_items_found_tosell"), "warning")
+            Notify(_U("shop_no_items_found_tosell"), "warning", 4000)
             return
         end
 
@@ -156,9 +156,7 @@ function RequestSellQuantity(item, shopName, isWeapon)
     devPrint("Received player level: " .. playerLevel)
 
     if item.level_required > playerLevel then
-        Notify(
-            "You need to be level " ..
-            item.level_required .. " to sell this " .. (isWeapon and "weapon" or "item") .. ".", "error")
+        Notify("You need to be level " .. item.level_required .. " to sell this " .. (isWeapon and "weapon" or "item") .. ".", "error", 4000)
         return
     end
 
@@ -241,7 +239,7 @@ function RequestSellQuantity(item, shopName, isWeapon)
             ProcessSale(shopName, item, quantity, isWeapon)
             SellMenu(shopName)
         else
-            Notify("Enter a valid quantity", "error")
+            Notify("Enter a valid quantity", "error", 4000)
             devPrint("Attempted sale with invalid quantity")
         end
     end)
@@ -271,7 +269,7 @@ function ProcessSale(shopName, item, quantity, isWeapon)
     end
 
     if not quantity or quantity <= 0 then
-        VORPcore.NotifyObjective("Invalid quantity. Sale request not sent.", 4000)
+        Notify(_U("invalidQuantityInput"), "error", 4000)
         devPrint("Invalid quantity for sale: " .. tostring(quantity))
         return
     end

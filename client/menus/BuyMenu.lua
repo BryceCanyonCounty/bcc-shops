@@ -27,84 +27,83 @@ function BuyMenu(shopName, returnPage)
         local totalPages = #allCategories
         local currentPage = returnPage or 1
 
-        local function generateHtmlContent(item, imgPath, unavailable)
-            local label = item.label or item.name
-            local price = item.price and item.price > 0 and ("$" .. item.price) or _U("unavailable")
-            local style = unavailable and 'opacity: 0.5; cursor: not-allowed;' or ''
-            return '<div style="display: flex; align-items: center; width: 100%;' .. style .. '">' ..
-                '<img src="' .. imgPath .. '" style="width: 38px; height: 38px; margin-right: 10px;">' ..
-                '<div style="flex-grow: 1; text-align: center;">' .. label .. '</div>' ..
-                '<div style="text-align: right; min-width: 60px;">' .. price .. '</div>' ..
-                '</div>'
-        end
+        local categoryId = allCategories[currentPage]
+        local type = categoryTypeMap[categoryId]
+        local entries = type == "item" and data.items[categoryId] or data.weapons[categoryId]
+        local label = categoryLabelMap[categoryId]
 
-        local function renderPage()
-            local categoryId = allCategories[currentPage]
-            local type = categoryTypeMap[categoryId]
-            local entries = type == "item" and data.items[categoryId] or data.weapons[categoryId]
-            local label = categoryLabelMap[categoryId]
+        local buyPage = BCCShopsMainMenu:RegisterPage('buyitems:category:' .. categoryId)
+        buyPage:RegisterElement('header', { value = shopName, slot = "header" })
+        buyPage:RegisterElement('line', { slot = "header", style = {} })
 
-            local buyPage = BCCShopsMainMenu:RegisterPage('buyitems:category:' .. categoryId)
-            buyPage:RegisterElement('header', { value = shopName, slot = "header" })
-            buyPage:RegisterElement('line', { slot = "header", style = {} })
+        buyPage:RegisterElement("subheader", {
+            value = (type == "weapon" and "🔫 " or "🔹 ") .. label,
+            style = { fontSize = "20px", bold = true, marginBottom = "5px", textAlign = "center" },
+            slot = "content",
+        })
 
-            buyPage:RegisterElement("subheader", {
-                value = (type == "weapon" and "🔫 " or "🔹 ") .. label,
-                style = { fontSize = "20px", bold = true, marginBottom = "5px", textAlign = "center" },
-                slot = "content",
+        -- build imagebox list
+        local imageBoxItems = {}
+        for index, item in ipairs(entries) do
+            local imgName = item.name:lower()
+            local imgPath = "nui://vorp_inventory/html/img/items/" .. imgName .. ".png"
+            local isUnavailable = not item.price or item.price <= 0
+
+            table.insert(imageBoxItems, {
+                type = "imagebox",
+                index = index,
+                data = {
+                    img = imgPath,
+                    label = item.price and ("$" .. item.price) or _U("unavailable"),
+                    tooltip = item.label or item.name,
+                    style = { margin = "5px" },
+                    disabled = isUnavailable,
+                    sound = { action = "SELECT", soundset = "HUD_SHOP" }
+                }
             })
-
-            for _, item in ipairs(entries) do
-                local imgName = item.name:lower()
-                local imgPath = "nui://vorp_inventory/html/img/items/" .. imgName .. ".png"
-                local isUnavailable = not item.price or item.price <= 0
-
-                local html = generateHtmlContent(item, imgPath, isUnavailable)
-
-                buyPage:RegisterElement('button', {
-                    html = html,
-                    slot = "content",
-                    disabled = isUnavailable
-                }, function()
-                    if not isUnavailable then
-                        RequestBuyQuantity({
-                            item_name      = item.name,
-                            item_label     = item.label,
-                            buy_price      = item.price,
-                            level_required = item.level,
-                            buy_quantity   = item.buy_quantity
-                        }, shopName, type == "weapon", currentPage)
-                    end
-                end)
-            end
-
-            buyPage:RegisterElement('pagearrows', {
-                slot = "footer",
-                total = totalPages,
-                current = currentPage,
-                style = {},
-            }, function(data)
-                if data.value == 'forward' then
-                    currentPage = math.min(currentPage + 1, totalPages)
-                elseif data.value == 'back' then
-                    currentPage = math.max(currentPage - 1, 1)
-                end
-                renderPage()
-            end)
-
-            buyPage:RegisterElement('line', { slot = "footer", style = {} })
-            buyPage:RegisterElement('button', {
-                label = _U("BackToStores"),
-                slot = "footer"
-            }, function()
-                BackToMainMenu(shopName)
-            end)
-
-            buyPage:RegisterElement('bottomline', { slot = "footer", style = {} })
-            BCCShopsMainMenu:Open({ startupPage = buyPage })
         end
 
-        renderPage()
+        -- show container instead of list buttons
+        buyPage:RegisterElement('imageboxcontainer', {
+            slot = "content",
+            items = imageBoxItems
+        }, function(data)
+            local chosen = entries[data.child.index]
+            if chosen and chosen.price and chosen.price > 0 then
+                RequestBuyQuantity({
+                    item_name      = chosen.name,
+                    item_label     = chosen.label,
+                    buy_price      = chosen.price,
+                    level_required = chosen.level,
+                    buy_quantity   = chosen.buy_quantity
+                }, shopName, type == "weapon", currentPage)
+            end
+        end)
+
+        buyPage:RegisterElement('pagearrows', {
+            slot = "footer",
+            total = totalPages,
+            current = currentPage,
+            style = {},
+        }, function(data)
+            if data.value == 'forward' then
+                currentPage = math.min(currentPage + 1, totalPages)
+            elseif data.value == 'back' then
+                currentPage = math.max(currentPage - 1, 1)
+            end
+            BuyMenu(shopName, currentPage) -- re-open on new page
+        end)
+
+        buyPage:RegisterElement('line', { slot = "footer", style = {} })
+        buyPage:RegisterElement('button', {
+            label = _U("BackToStores"),
+            slot = "footer"
+        }, function()
+            BackToMainMenu(shopName)
+        end)
+
+        buyPage:RegisterElement('bottomline', { slot = "footer", style = {} })
+        BCCShopsMainMenu:Open({ startupPage = buyPage })
     end)
 end
 
@@ -114,9 +113,7 @@ function RequestBuyQuantity(item, shopName, isWeapon, returnPage)
     playerLevel = level
 
     if item.level_required > playerLevel then
-        Notify(
-            "You need to be level " ..
-            item.level_required .. " to purchase this " .. (isWeapon and "weapon" or "item") .. ".", "error")
+        Notify("You need to be level " .. item.level_required .. " to purchase this " .. (isWeapon and "weapon" or "item") .. ".", "error", 4000)
         return
     end
 
@@ -239,7 +236,7 @@ function ProcessPurchase(shopName, item, quantity, isWeapon)
             end)
         end
     else
-        VORPcore.NotifyObjective("Invalid quantity. Purchase request not sent.")
+        Notify(_U("invalidQuantityNotSent"), "error", 4000)
         devPrint("Invalid quantity for purchase: " .. tostring(quantity))
     end
 end

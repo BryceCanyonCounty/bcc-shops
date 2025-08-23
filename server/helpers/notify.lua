@@ -16,10 +16,11 @@ else
     function devPrint(...) end
 end
 
-function NotifyClient(src, message, type)
-    BccUtils.RPC:Notify("bcc-shops:NotifyClient", {
+function NotifyClient(src, message, type, duration)
+    BccUtils.RPC:Notify("bcc-shop:NotifyClient", {
         message = message,
-        type = type or "info"
+        type = type or "info",
+        duration = duration or 4000
     }, src)
 end
 

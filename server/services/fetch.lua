@@ -84,7 +84,7 @@ BccUtils.RPC:Register("bcc-shops:fetchPlayerStoreInfo", function(params, cb, src
 
     if not storeResult or #storeResult == 0 then
         devPrint("No store found with shop name: " .. tostring(shopName))
-        NotifyClient(src, 'Shop not found', "warning")
+        NotifyClient(src, 'Shop not found', "warning", 4000)
         return cb(false)
     end
 
@@ -388,7 +388,7 @@ BccUtils.RPC:Register("bcc-shops:GetItemCount", function(params, cb, src)
 end)
 
 BccUtils.RPC:Register("bcc-shops:GetItemsForShop", function(data, cb, src)
-    local shopName = data.shopName
+    local shopName = data and data.shopName
     if not shopName then
         return cb(false, "[ERROR] Shop name is required.")
     end
@@ -400,13 +400,64 @@ BccUtils.RPC:Register("bcc-shops:GetItemsForShop", function(data, cb, src)
 
         local shopId = shopResults[1].shop_id
 
+        -- Fetch items
         MySQL.query("SELECT * FROM bcc_shop_items WHERE shop_id = ?", { shopId }, function(itemResults)
-            if not itemResults or #itemResults == 0 then
-                NotifyClient(src, _U("shop_no_items_found"), "warning")
-                return cb(false)
-            end
+            itemResults = itemResults or {}
 
-            cb(true, itemResults)
+            -- Fetch weapons
+            MySQL.query("SELECT * FROM bcc_shop_weapon_items WHERE shop_id = ?", { shopId }, function(weaponResults)
+                weaponResults = weaponResults or {}
+
+                local combined = {}
+
+                -- Push items as-is + is_weapon = 0
+                for _, it in ipairs(itemResults) do
+                    it.is_weapon = 0
+                    -- ensure item_* fields exist (some schemas use different names)
+                    it.item_name       = it.item_name or it.name
+                    it.item_label      = it.item_label or it.label
+                    it.category        = it.category or it.category_id  -- keep both for legacy code
+                    it.category_id     = it.category_id or it.category
+                    it.level_required  = it.level_required or it.level
+                    it.buy_quantity    = it.buy_quantity or 0
+                    it.sell_quantity   = it.sell_quantity or 0
+                    table.insert(combined, it)
+                end
+
+                -- Map weapons to item-like fields + is_weapon = 1
+                for _, w in ipairs(weaponResults) do
+                    table.insert(combined, {
+                        -- normalized (so client code that expects item_* works)
+                        is_weapon      = 1,
+                        item_name      = w.weapon_name,
+                        item_label     = w.weapon_label,
+                        buy_price      = w.buy_price,
+                        sell_price     = w.sell_price,
+                        category       = w.category or w.category_id,
+                        category_id    = w.category_id or w.category,
+                        level_required = w.level_required,
+                        buy_quantity   = w.buy_quantity or 0,
+                        sell_quantity  = w.sell_quantity or 0,
+
+                        -- keep original weapon fields too (for edit weapon page)
+                        weapon_name    = w.weapon_name,
+                        weapon_label   = w.weapon_label,
+                        custom_desc    = w.custom_desc,
+                        weapon_info    = w.weapon_info,
+                        weapon_id      = w.weapon_id,
+
+                        -- optional: for debugging
+                        _source_table  = "bcc_shop_weapon_items",
+                    })
+                end
+
+                if #combined == 0 then
+                    NotifyClient(src, _U("shop_no_items_found"), "warning", 4000)
+                    return cb(false, "No items or weapons found.")
+                end
+
+                cb(true, combined)
+            end)
         end)
     end)
 end)

@@ -408,26 +408,62 @@ BccUtils.RPC:Register("bcc-shops:EditCategory", function(params, cb, src)
 end)
 
 BccUtils.RPC:Register("bcc-shops:DeleteCategory", function(params, cb, src)
-    if not params or not params.id then return cb(false) end
+    if not params or not params.id then
+        NotifyClient(source, _U('missingCategoryId'), "success")
+        return cb(false)
+    end
 
-    local deleted = MySQL.update.await("DELETE FROM bcc_shop_categories WHERE id = ?", { params.id })
-    cb(deleted and deleted > 0)
+    local categoryId = tonumber(params.id)
+    if not categoryId then
+        devPrint("Invalid category id: " .. tostring(params.id))
+        return cb(false)
+    end
+
+    -- Check references before attempting delete
+    local inUseItems   = MySQL.scalar.await("SELECT COUNT(*) FROM bcc_shop_items WHERE category_id = ?", { categoryId }) or 0
+    local inUseWeapons = MySQL.scalar.await("SELECT COUNT(*) FROM bcc_shop_weapon_items WHERE category_id = ?", { categoryId }) or 0
+
+    if (inUseItems + inUseWeapons) > 0 then
+        local msg = ("Category is in use: " .. inUseItems .. " item(s), " .. inUseWeapons .. " weapon(s). Remove or reassign them first.")
+        devPrint("[DeleteCategory] Blocked delete for id " .. categoryId .. " -> " .. msg)
+        return cb(false, msg)
+    end
+
+    -- Safe to delete
+    local ok, resOrErr = pcall(function()
+        return MySQL.update.await("DELETE FROM bcc_shop_categories WHERE id = ?", { categoryId })
+    end)
+
+    if not ok then
+        devPrint(("[DeleteCategory] DB error while deleting id %d: %s"):format(categoryId, tostring(resOrErr)))
+        return cb(false)
+    end
+
+    local affected = resOrErr or 0
+    if affected > 0 then
+        devPrint(("[DeleteCategory] Deleted category id %d"):format(categoryId))
+        return cb(true)
+    else
+        devPrint(("[DeleteCategory] Nothing deleted for id " .. categoryId .. " (not found?)"))
+        return cb(false, "Category not found")
+    end
 end)
 
+
 BccUtils.RPC:Register("bcc-shops:GetAllCategories", function(_, cb, src)
-    local categories = MySQL.query.await("SELECT id, name FROM bcc_shop_categories")
+    local categories = MySQL.query.await("SELECT id, name, label FROM bcc_shop_categories")
     cb(categories or {})
 end)
 
 BccUtils.RPC:Register("bcc-shops:EditShop", function(params, cb, source)
     if not params or not params.shopId then
-        devPrint("❌ Missing required parameter: shopId")
+        devPrint("Missing required parameter: shopId")
         return cb(false)
     end
 
     local shopId = tonumber(params.shopId)
     if not shopId then
-        devPrint("❌ Invalid shopId provided")
+        devPrint("Invalid shopId provided")
         return cb(false)
     end
 
@@ -457,7 +493,7 @@ BccUtils.RPC:Register("bcc-shops:EditShop", function(params, cb, source)
     end
 
     if #updateFields == 0 then
-        devPrint("⚠️ No fields to update for shop ID " .. tostring(shopId))
+        devPrint("No fields to update for shop ID " .. tostring(shopId))
         return cb(false)
     end
 
@@ -466,7 +502,7 @@ BccUtils.RPC:Register("bcc-shops:EditShop", function(params, cb, source)
     local sql = "UPDATE bcc_shops SET " .. table.concat(updateFields, ", ") .. " WHERE shop_id = ?"
 
     local success = MySQL.update.await(sql, updateValues) > 0
-    devPrint("🛠️ Shop update result for ID " .. shopId .. ": " .. tostring(success))
+    devPrint("Shop update result for ID " .. shopId .. ": " .. tostring(success))
     cb(success)
 end)
 

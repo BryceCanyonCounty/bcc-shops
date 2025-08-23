@@ -15,7 +15,7 @@ BccUtils.RPC:Register("bcc-shops:GiveAccess", function(params, cb, source)
 
     if existingAccess and #existingAccess > 0 then
         devPrint("Character ID " .. characterId .. " already has access to shop ID " .. shopId)
-        NotifyClient(source, _U('accessAlreadyExists'), "warning")
+        NotifyClient(source, _U('accessAlreadyExists'), "warning", 4000)
         return cb(false)
     end
 

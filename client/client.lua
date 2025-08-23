@@ -4,6 +4,7 @@ local MAX_SELL_PRICE = Config.MAX_SELL_PRICE
 VORPcore = exports.vorp_core:GetCore()
 BccUtils = exports['bcc-utils'].initiate()
 FeatherMenu = exports['feather-menu'].initiate()
+
 CreatedBlip, CreatedNPC, playerStores, npcStores, globalNearbyShops, currentPlayers, ownedShops = {}, {}, {}, {}, {}, {},{}
 isPlayerNearStore, storesFetched = false, false
 AdminAllowed, OwnerAllowed, currentAction = nil, nil, nil
@@ -27,7 +28,7 @@ BCCShopsMainMenu = FeatherMenu:RegisterMenu('bcc-shops:mainmenu',     {
         ['2kwidth'] = '600px',
         ['4kwidth'] = '800px',
         style = {
-            --['background-image'] = 'url("nui://bcc-craft/assets/background.png")',
+            --['background-image'] = 'url("nui://bcc-shops/images/background.png")',
             --['background-size'] = 'cover',  
             --['background-repeat'] = 'no-repeat',
                 --['background-position'] = 'center',
@@ -80,7 +81,7 @@ function HandlePlayerDeathAndCloseMenu()
         end
     end)
 
-    devPrint("Player is alive, crafting menu can be opened.")
+    devPrint("Player is alive, shop menu can be opened.")
     return false -- Return false to indicate the player is alive and the menu can open
 end
 
@@ -108,7 +109,7 @@ function OpenPlayerBuySellMenu(shopName)
 
     BccUtils.RPC:Call("bcc-shops:fetchPlayerStoreInfo", { shopName = shopName }, function(data, err)
         if not data then
-            Notify("Failed to fetch store: " .. (err or "Unknown error"), "error")
+            devPrint("Failed to fetch store: " .. (err or "Unknown error"))
             return
         end
 
@@ -123,7 +124,7 @@ function OpenAddPlayerItemMenu(storeName)
     local ownershipData = BccUtils.RPC:CallAsync("bcc-shops:CheckStoreOwnership", { storeName = storeName })
 
     if not ownershipData or not ownershipData.storeName then
-        Notify("Ownership check failed.", "error")
+        devPrint("Ownership check failed.")
         return
     end
 
@@ -135,19 +136,18 @@ function OpenAddPlayerItemMenu(storeName)
 
         local result = BccUtils.RPC:CallAsync("bcc-shops:fetchPlayerInventory", { shopName = ownershipData.storeName })
         if not result then
-            Notify("Failed to fetch inventory.", "error")
+            devPrint("Failed to fetch inventory.")
             return
         end
         OpenPlayerInventoryMenu(result.shopName, result.inventory, result.weapons)
-        --OpenPlayerInventoryMenu(result.shopName, result.inventory)
     else
         devPrint("Player does NOT have permission for store: " .. ownershipData.storeName)
-        VORPcore.NotifyObjective('You do not have permission to add items.', 4000)
+        Notify(_U("noPermissionToAddItems"), "error", 4000)
     end
 end
 
 function OpenBuyMenu(shopName, storeType)
-    devPrint("Opening unified Buy Menu for " .. storeType .. " store: " .. shopName)
+    devPrint("Opening Buy Menu for " .. storeType .. " store: " .. shopName)
     if HandlePlayerDeathAndCloseMenu() then
         devPrint("Player is dead, closing the menu")
         return

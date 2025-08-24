@@ -1,25 +1,3 @@
-<1.1.0>
-## What's New
-- **Image Box Container**
-  - Added support for `imageboxcontainer` UI elements.  
-  - Requires the **latest version of Feather Menu** to work properly.
-
-- **Notify Function Improvements**
-  - New wrapper function allows switching between **VORP notifications** and **Feather Menu notifications** seamlessly.
-
-- **Localization**
-  - Added more localization keys for better translation support.
-
-- **NPC Shops – Add From Inventory**
-  - You can now add items directly from your **own inventory** into NPC shops.  
-    - Must physically have the item/weapon in your inventory.  
-    - Old “manual add” option is still available.  
-  - Supports adding **both items and weapons**.
-
-- **Max Sell Price**
-  - Thanks to @Zereth616  for the contribution.  
-  - Added a config option to cap maximum sell prices.
-
-## Fixes & Improvements
-- General bug fixes.  
-- Performance optimizations and minor code improvements. 
+<1.1.1>
+## Fixes
+- Missing configurable notify option in config

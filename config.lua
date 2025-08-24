@@ -77,5 +77,6 @@ Config = {
                 npcB = vector3(1245.67, -1262.89, 76.45)
             },
         }
-    }
+    },
+    Notify = "feather-menu" ----or use vorp-core
 }

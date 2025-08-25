@@ -33,12 +33,23 @@ function BuyMenu(shopName, returnPage)
         local label = categoryLabelMap[categoryId]
 
         local buyPage = BCCShopsMainMenu:RegisterPage('buyitems:category:' .. categoryId)
-        buyPage:RegisterElement('header', { value = shopName, slot = "header" })
-        buyPage:RegisterElement('line', { slot = "header", style = {} })
+        buyPage:RegisterElement('header', {
+            value = shopName,
+            slot = "header"
+        })
+        buyPage:RegisterElement('line', {
+            slot = "header",
+            style = {}
+        })
 
         buyPage:RegisterElement("subheader", {
             value = (type == "weapon" and "🔫 " or "🔹 ") .. label,
-            style = { fontSize = "20px", bold = true, marginBottom = "5px", textAlign = "center" },
+            style = {
+                fontSize = "20px",
+                bold = true,
+                marginBottom = "5px",
+                textAlign = "center"
+            },
             slot = "content",
         })
 
@@ -56,9 +67,14 @@ function BuyMenu(shopName, returnPage)
                     img = imgPath,
                     label = item.price and ("$" .. item.price) or _U("unavailable"),
                     tooltip = item.label or item.name,
-                    style = { margin = "5px" },
+                    style = {
+                        margin = "5px"
+                    },
                     disabled = isUnavailable,
-                    sound = { action = "SELECT", soundset = "HUD_SHOP" }
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }
             })
         end
@@ -85,6 +101,10 @@ function BuyMenu(shopName, returnPage)
             total = totalPages,
             current = currentPage,
             style = {},
+            sound = { 
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function(data)
             if data.value == 'forward' then
                 currentPage = math.min(currentPage + 1, totalPages)
@@ -97,7 +117,11 @@ function BuyMenu(shopName, returnPage)
         buyPage:RegisterElement('line', { slot = "footer", style = {} })
         buyPage:RegisterElement('button', {
             label = _U("BackToStores"),
-            slot = "footer"
+            slot = "footer",
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             BackToMainMenu(shopName)
         end)
@@ -113,7 +137,9 @@ function RequestBuyQuantity(item, shopName, isWeapon, returnPage)
     playerLevel = level
 
     if item.level_required > playerLevel then
-        Notify("You need to be level " .. item.level_required .. " to purchase this " .. (isWeapon and "weapon" or "item") .. ".", "error", 4000)
+        Notify(
+        "You need to be level " ..
+        item.level_required .. " to purchase this " .. (isWeapon and "weapon" or "item") .. ".", "error", 4000)
         return
     end
 
@@ -125,7 +151,10 @@ function RequestBuyQuantity(item, shopName, isWeapon, returnPage)
     <div style="margin: auto; padding: 20px 30px;">
         <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
             <div style="flex-shrink: 0;">
-                <img src="]] .. imgPath .. [[" alt="]] .. item.item_label .. [[" style="width: 100px; height: 100px; border: 1px solid #bbb; border-radius: 6px;">
+                <img src="]] ..
+    imgPath ..
+    [[" alt="]] ..
+    item.item_label .. [[" style="width: 100px; height: 100px; border: 1px solid #bbb; border-radius: 6px;">
             </div>
             <table style="flex-grow: 1; width: 100%; border-collapse: collapse; font-size: 16px;">
                 <tr style="border-bottom: 1px solid #ddd;">
@@ -160,11 +189,17 @@ function RequestBuyQuantity(item, shopName, isWeapon, returnPage)
         quantity = tonumber(data.value) or 1
     end)
 
-    inputPage:RegisterElement('line', { slot = "footer", style = {} })
+    inputPage:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
     inputPage:RegisterElement('button', {
         label = _U('storeBuy'),
         slot = "footer",
-        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if quantity then
             ProcessPurchase(shopName, item, quantity, isWeapon)
@@ -175,12 +210,18 @@ function RequestBuyQuantity(item, shopName, isWeapon, returnPage)
     inputPage:RegisterElement('button', {
         label = _U('BackToItems'),
         slot = "footer",
-        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         BuyMenu(shopName, returnPage)
     end)
 
-    inputPage:RegisterElement('bottomline', { slot = "footer", style = {} })
+    inputPage:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
     BCCShopsMainMenu:Open({ startupPage = inputPage })
 end
 
@@ -260,7 +301,8 @@ function ProcessPurchaseNpc(shopName, item, quantity, isWeapon)
     local buyPrice = item.buy_price or item.price or 0
     local totalCost = buyPrice * quantity
 
-    devPrint("Item: " .. itemName .. ", Quantity: " .. quantity .. ", Total: " .. totalCost .. ", IsWeapon: " .. tostring(isWeapon))
+    devPrint("Item: " ..
+    itemName .. ", Quantity: " .. quantity .. ", Total: " .. totalCost .. ", IsWeapon: " .. tostring(isWeapon))
 
     if quantity and quantity > 0 then
         local rpcName = isWeapon and "bcc-shops:PurchaseWeaponNPC" or "bcc-shops:PurchaseItemNPC"

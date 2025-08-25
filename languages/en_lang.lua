@@ -281,5 +281,7 @@ Locales["en_lang"] = {
     storeAddFromInventory           = "Add Items From Inventory",
     addWeaponTitle                  = "Add Weapon",
     selectCategory                   = "Select Category",
-    price_limit_exceeded            = "The entered price exceeds the maximum allowed limit."
+    price_limit_exceeded            = "The entered price exceeds the maximum allowed limit.",
+    maxSellPrice                    = "Max Sell Price",
+    maxBuyPrice                     = "Max Buy Price"
 }

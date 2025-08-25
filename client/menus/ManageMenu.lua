@@ -7,27 +7,40 @@ function OpenInitialManageMenu(stores, players)
 
     Pages.initialManagePage:RegisterElement('button', {
         label = _U('createStore'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenCreateStoreMenu()
     end)
 
     Pages.initialManagePage:RegisterElement('button', {
         label = _U('manageStores'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         Pages.initialManageStores = BCCShopsMainMenu:RegisterPage('bcc-shops:managestores')
 
-        -- Header
         Pages.initialManageStores:RegisterElement('header', {
             value = _U('manageStores'),
             slot = "header"
         })
 
-        -- NPC Shops Button
         Pages.initialManageStores:RegisterElement('button', {
             label = _U('npcStores'),
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             BccUtils.RPC:Call("bcc-shops:FetchNPCShops", {}, function(npcShops)
                 if npcShops then
@@ -42,7 +55,12 @@ function OpenInitialManageMenu(stores, players)
                         local label = (shop.shop_label or shop.shop_name) .. " [" .. shop.shop_name .. "]"
                         npcListPage:RegisterElement("button", {
                             label = label,
-                            slot = "content"
+                            slot = "content",
+                            style = {},
+                            sound = {
+                                action = "SELECT",
+                                soundset = "RDRO_Character_Creator_Sounds"
+                            }
                         }, function()
                             OpenEditShopPage(shop)
                         end)
@@ -50,7 +68,12 @@ function OpenInitialManageMenu(stores, players)
 
                     npcListPage:RegisterElement("button", {
                         label = _U("backButton"),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         Pages.initialManageStores:RouteTo()
                     end)
@@ -62,10 +85,14 @@ function OpenInitialManageMenu(stores, players)
             end)
         end)
 
-        -- Player Shops Button
         Pages.initialManageStores:RegisterElement('button', {
             label = _U('playerStores'),
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             BccUtils.RPC:Call("bcc-shops:FetchPlayerShops", {}, function(playerShops)
                 if playerShops then
@@ -80,14 +107,24 @@ function OpenInitialManageMenu(stores, players)
                         local label = (shop.shop_label or shop.shop_name) .. " [" .. shop.shop_name .. "]"
                         Pages.playerListPage:RegisterElement("button", {
                             label = label,
-                            slot = "content"
+                            slot = "content",
+                            style = {},
+                            sound = {
+                                action = "SELECT",
+                                soundset = "RDRO_Character_Creator_Sounds"
+                            }
                         }, function()
                             OpenEditShopPage(shop)
                         end)
                     end
                     Pages.playerListPage:RegisterElement("button", {
                         label = _U("backButton"),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         Pages.initialManageStores:RouteTo()
                     end)
@@ -108,7 +145,12 @@ function OpenInitialManageMenu(stores, players)
         -- Back button
         Pages.initialManageStores:RegisterElement('button', {
             label = _U('backButton'),
-            slot = "footer"
+            slot = "footer",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             Pages.initialManagePage:RouteTo()
         end)
@@ -125,9 +167,14 @@ function OpenInitialManageMenu(stores, players)
 
     Pages.initialManagePage:RegisterElement('button', {
         label = _U('deleteStores'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
-        OpenDeleteStoresMenu(stores)
+        OpenDeleteStoresMenu()
     end)
 
     Pages.initialManagePage:RegisterElement('button', {
@@ -142,21 +189,36 @@ function OpenInitialManageMenu(stores, players)
 
         Pages.CategoryPage:RegisterElement('button', {
             label = _U('createCategory'),
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenCreateCategoryMenu()
         end)
 
         Pages.CategoryPage:RegisterElement('button', {
             label = _U('editCategory'),
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenEditCategoryMenu()
         end)
 
         Pages.CategoryPage:RegisterElement('button', {
             label = _U('deleteCategory'),
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenDeleteCategoryMenu()
         end)
@@ -167,7 +229,12 @@ function OpenInitialManageMenu(stores, players)
         })
         Pages.CategoryPage:RegisterElement('button', {
             label = _U('backButton'),
-            slot = "footer"
+            slot = "footer",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             Pages.initialManagePage:RouteTo()
         end)
@@ -184,7 +251,12 @@ function OpenInitialManageMenu(stores, players)
     })
     Pages.initialManagePage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         BCCShopsMainMenu:Close()
     end)
@@ -204,14 +276,24 @@ function OpenCreateStoreMenu()
 
     createStorePage:RegisterElement('button', {
         label = _U('createNPCStore'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenCreateNPCStoreMenu()
     end)
 
     createStorePage:RegisterElement('button', {
         label = _U('createPlayerStore'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         FetchPlayersForOwnerSelection()
     end)
@@ -223,7 +305,12 @@ function OpenCreateStoreMenu()
 
     createStorePage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenInitialManageMenu()
     end)
@@ -245,7 +332,12 @@ function OpenDeleteStoresMenu()
 
     deleteStoresPage:RegisterElement('button', {
         label = _U('npcStores'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         currentAction = "deleteNPCStores"
         devPrint("Pressed NPC Stores button — sending RPC")
@@ -263,7 +355,12 @@ function OpenDeleteStoresMenu()
 
     deleteStoresPage:RegisterElement('button', {
         label = _U('playerStores'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         currentAction = "deletePlayerStores"
 
@@ -285,7 +382,12 @@ function OpenDeleteStoresMenu()
 
     deleteStoresPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenInitialManageMenu()
     end)
@@ -308,7 +410,12 @@ function OpenDeletePlayerStoresMenu()
     for _, store in ipairs(playerStores) do
         deletePlayerStoresPage:RegisterElement('button', {
             label = store.shop_name,
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenDeleteConfirmationMenu(store.shop_id, store.shop_name, "player")
         end)
@@ -321,7 +428,12 @@ function OpenDeletePlayerStoresMenu()
 
     deletePlayerStoresPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenDeleteStoresMenu()
     end)
@@ -347,7 +459,12 @@ function OpenDeleteConfirmationMenu(storeId, shopName, storeType)
 
     confirmationPage:RegisterElement('button', {
         label = _U('yes'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if storeType == "npc" then
             BccUtils.RPC:Call("bcc-shops:deleteNPCShop", { shopId = storeId })
@@ -359,7 +476,12 @@ function OpenDeleteConfirmationMenu(storeId, shopName, storeType)
 
     confirmationPage:RegisterElement('button', {
         label = _U('no'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if storeType == "npc" then
             OpenDeleteNPCStoresMenu()
@@ -417,12 +539,18 @@ function OpenCreateCategoryMenu()
 
     Pages.createCatPage:RegisterElement('button', {
         label = _U("submitChanges"),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if newName and newName:len() > 0 then
             BccUtils.RPC:Call("bcc-shops:CreateCategory", { name = newName }, function(success)
                 if success then
-                    Notify(_U("categoryCreated"), "success", 4000)
+                    Notify(_U("categoryCreatedSuccess"), "success", 4000)
+                    Pages.CategoryPage:RouteTo()
                 else
                     Notify(_U("categoryCreateFailed"), "error", 4000)
                 end
@@ -432,7 +560,12 @@ function OpenCreateCategoryMenu()
 
     Pages.createCatPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         Pages.CategoryPage:RouteTo()
     end)
@@ -457,7 +590,12 @@ function OpenEditCategoryMenu()
     for _, cat in ipairs(categories) do
         Pages.editCatPage:RegisterElement('button', {
             label = cat.label,
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             local renamePage = BCCShopsMainMenu:RegisterPage("bcc-shops:renameCategory")
             renamePage:RegisterElement('header', {
@@ -480,7 +618,12 @@ function OpenEditCategoryMenu()
             })
             renamePage:RegisterElement('button', {
                 label = _U("submitChanges"),
-                slot = "footer"
+                slot = "footer",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 BccUtils.RPC:Call("bcc-shops:EditCategory", {
                     id = cat.id,
@@ -497,7 +640,12 @@ function OpenEditCategoryMenu()
 
             renamePage:RegisterElement('button', {
                 label = _U('backButton'),
-                slot = "footer"
+                slot = "footer",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 Pages.editCatPage:RouteTo()
             end)
@@ -518,7 +666,12 @@ function OpenEditCategoryMenu()
 
     Pages.editCatPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",        
+        style = {},
+        sound = { 
+            action = "SELECT", 
+            soundset = "RDRO_Character_Creator_Sounds" 
+        }
     }, function()
         Pages.CategoryPage:RouteTo()
     end)
@@ -565,7 +718,12 @@ function OpenEditShopPage(shop)
     -- Submit changes
     Pages.editPage:RegisterElement("button", {
         label = _U("submitChanges"),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         edits.shopId = shop.shop_id
         edits.shop_type = shop.shop_type -- optional, in case you log or display type
@@ -583,7 +741,12 @@ function OpenEditShopPage(shop)
     -- Back button
     Pages.editPage:RegisterElement("button", {
         label = _U("backButton"),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         Pages.CategoryPage:RouteTo()
     end)
@@ -604,7 +767,12 @@ function OpenDeleteCategoryMenu()
     for _, cat in ipairs(categories) do
         deleteCatPage:RegisterElement('button', {
             label = cat.name,
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             local confirmDeletePage = BCCShopsMainMenu:RegisterPage("bcc-shops:confirmDeleteCategory")
 
@@ -614,7 +782,12 @@ function OpenDeleteCategoryMenu()
             })
             confirmDeletePage:RegisterElement("button", {
                 label = _U("yes"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 BccUtils.RPC:Call("bcc-shops:DeleteCategory", { id = cat.id }, function(success)
                     if success then
@@ -627,7 +800,12 @@ function OpenDeleteCategoryMenu()
             end)
             confirmDeletePage:RegisterElement("button", {
                 label = _U("no"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 deleteCatPage:RouteTo()
             end)
@@ -642,9 +820,14 @@ function OpenDeleteCategoryMenu()
 
     deleteCatPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
-        Pages.initialManageStores:RouteTo()
+        Pages.CategoryPage:RouteTo()
     end)
 
     deleteCatPage:RegisterElement('bottomline', {

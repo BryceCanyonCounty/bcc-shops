@@ -1,23 +1,20 @@
 Config = {
     defaultlang = "en_lang", -- Set Your Language (Current Languages: "en_lang" English, "ro_lang" Romanian)
-    MAX_SELL_PRICE = 100,-- maximum allowed sell price
     keys = {
         access = 0x760A9C6F, -- [G] Access Player menu
     },
-
-
     devMode = false,
     ManageShopsCommand = "manageStores", 
     Webhook ="",
     WebhookTitle = 'BCC-Shops',
     WebhookAvatar = '',
+
     adminGroups = { 'admin', 'superadmin', 'moderator' },
     AllowedJobs = { 'writer', 'storemanager' },
 
     DefaultNPCModel = "u_m_m_valgenstoreowner_01",
     DefaultBlipHash = "1475879922",
-  
-    -- Your BlipStyles table
+
     BlipStyles = {
         { label = "Animal Trapper",     blipName = "blip_shop_animal_trapper",    blipHash = -1406874050 },
         { label = "Barber",             blipName = "blip_shop_barber",            blipHash = -2090472724 },
@@ -41,7 +38,7 @@ Config = {
     NPC = {
         npcBuyFromPlayerShop = true,
         npcMeetEnabled = true,
-        purchaseInterval = 900000, -- every 15 minutes
+        purchaseInterval = 900000,
         npcModels = {
             "g_m_m_unibanditos_01",
             "ge_delloboparty_females_01",
@@ -67,9 +64,9 @@ Config = {
                 npcB = vector3(-770.74, -1298.85, 43.73)
             },
             Valentine = {
-                meet = vector3(-325.09, 822.11, 118.16),
-                npcA = vector3(-337.89, 805.3, 116.65),
-                npcB = vector3(-299.07, 804.02, 118.45)
+                 meet = vector3(-325.09, 822.11, 118.16),
+                 npcA = vector3(-337.89, 805.3, 116.65),
+                 npcB = vector3(-299.07, 804.02, 118.45)
             },
             Rhodes = {
                 meet = vector3(1232.45, -1280.67, 76.45),
@@ -78,5 +75,5 @@ Config = {
             },
         }
     },
-    Notify = "feather-menu" ----or use vorp-core
+    Notify = "feather-menu", ----or use vorp-core
 }

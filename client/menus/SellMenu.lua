@@ -1,15 +1,13 @@
-function SellMenu(shopName)
-    devPrint("🟢 Entered SellMenu for shop: " .. tostring(shopName))
+function SellMenu(shopName, returnPage)
+    devPrint("Entered SellMenu for shop: " .. tostring(shopName))
+
     BccUtils.RPC:Call("bcc-shops:GetShopItems", { shopName = shopName }, function(data)
         if (not data.items or next(data.items) == nil) and (not data.weapons or next(data.weapons) == nil) then
             Notify(_U("shop_no_items_found_tosell"), "error", 4000)
             return
         end
 
-        local validCategories = {}
-        local categoryTypeMap = {}
-        local categoryLabelMap = {}
-
+        -- helpers to gather categories that actually have items with sell_price > 0
         local function hasValidItems(entries)
             for _, item in ipairs(entries or {}) do
                 if item.sell_price and item.sell_price > 0 then
@@ -19,20 +17,24 @@ function SellMenu(shopName)
             return false
         end
 
-        -- Collect valid item categories
+        local validCategories  = {}
+        local categoryTypeMap  = {}
+        local categoryLabelMap = {}
+
+        -- items
         for categoryId, entries in pairs(data.items or {}) do
             if hasValidItems(entries) then
                 table.insert(validCategories, categoryId)
-                categoryTypeMap[categoryId] = "item"
+                categoryTypeMap[categoryId]  = "item"
                 categoryLabelMap[categoryId] = entries._label or tostring(categoryId)
             end
         end
 
-        -- Collect valid weapon categories
+        -- weapons
         for categoryId, entries in pairs(data.weapons or {}) do
             if hasValidItems(entries) then
                 table.insert(validCategories, categoryId)
-                categoryTypeMap[categoryId] = "weapon"
+                categoryTypeMap[categoryId]  = "weapon"
                 categoryLabelMap[categoryId] = entries._label or tostring(categoryId)
             end
         end
@@ -44,108 +46,124 @@ function SellMenu(shopName)
             return
         end
 
-        local totalPages = #validCategories
-        local currentPage = 1
+        local totalPages  = #validCategories
+        local currentPage = returnPage or 1
 
-        local function generateHtmlContent(item, imgPath)
-            local label = item.label or item.name
-            local price = "$" .. (item.sell_price or 0)
-            local level = "Lvl " .. (item.level or 0)
+        local categoryId  = validCategories[currentPage]
+        local kind        = categoryTypeMap[categoryId]
+        local entries     = (kind == "item") and data.items[categoryId] or data.weapons[categoryId]
+        local label       = categoryLabelMap[categoryId]
 
-            return '<div style="display: flex; align-items: center; width: 100%;">'
-                .. '<img src="' .. imgPath .. '" style="width: 38px; height: 38px; margin-right: 10px;">'
-                .. '<div style="flex-grow: 1;">'
-                .. '<div style="font-weight: bold;">' .. label .. '</div>'
-                .. '<div style="font-size: 13px;">' .. level .. '</div>'
-                .. '</div>'
-                .. '<div style="text-align: right; min-width: 60px;">' .. price .. '</div>'
-                .. '</div>'
-        end
+        local sellPage    = BCCShopsMainMenu:RegisterPage('sellitems:category:' .. categoryId)
+        sellPage:RegisterElement('header', { value = shopName, slot = "header" })
+        sellPage:RegisterElement('line', { slot = "header", style = {} })
 
-        local function renderPage()
-            local categoryId = validCategories[currentPage]
-            local type = categoryTypeMap[categoryId]
-            local entries = type == "item" and data.items[categoryId] or data.weapons[categoryId]
-            local label = categoryLabelMap[categoryId]
+        sellPage:RegisterElement("subheader", {
+            value = (kind == "weapon" and "🔫 " or "🔹 ") .. label,
+            style = { fontSize = "20px", bold = true, marginBottom = "5px", textAlign = "center" },
+            slot  = "content",
+        })
 
-            local sellPage = BCCShopsMainMenu:RegisterPage('sellitems:category:' .. categoryId)
-            sellPage:RegisterElement('header', { value = shopName, slot = "header" })
-            sellPage:RegisterElement('line', { slot = "header", style = {} })
+        -- Build imagebox list (only sellable entries)
+        local imageBoxItems = {}
+        local indexMap      = {} -- map visible index -> entry
+        local visibleIndex  = 0
 
-            sellPage:RegisterElement("subheader", {
-                value = (type == "weapon" and "🔫 " or "🔹 ") .. label,
-                style = {
-                    fontSize = "20px",
-                    bold = true,
-                    marginBottom = "5px",
-                    textAlign = "center"
-                },
-                slot = "content",
-            })
+        for _, item in ipairs(entries or {}) do
+            if item.sell_price and item.sell_price > 0 then
+                visibleIndex = visibleIndex + 1
+                indexMap[visibleIndex] = item
 
-            local hasSellableItems = false
+                local imgName = (item.name or ""):lower()
+                local imgPath = "nui://vorp_inventory/html/img/items/" .. imgName .. ".png"
 
-            for _, item in ipairs(entries) do
-                if item.sell_price and item.sell_price > 0 then
-                    hasSellableItems = true
-                    local imgPath = "nui://vorp_inventory/html/img/items/" .. item.name:lower() .. ".png"
-                    local html = generateHtmlContent(item, imgPath)
-
-                    sellPage:RegisterElement('button', {
-                        html = html,
-                        slot = "content"
-                    }, function()
-                        RequestSellQuantity({
-                            item_name      = item.name,
-                            item_label     = item.label,
-                            sell_price     = item.sell_price,
-                            level_required = item.level,
-                            sell_quantity  = item.sell_quantity
-                        }, shopName, type == "weapon")
-                    end)
-                end
-            end
-
-            if not hasSellableItems then
-                sellPage:RegisterElement("text", {
-                    value = _U("noSellableItemsInCategory"),
-                    style = {
-                        fontSize = "16px",
-                        color = "#bbb",
-                        textAlign = "center",
-                        marginTop = "10px"
-                    },
-                    slot = "content"
+                table.insert(imageBoxItems, {
+                    type  = "imagebox",
+                    index = visibleIndex,
+                    data  = {
+                        img      = imgPath,
+                        label    = "$" .. tostring(item.sell_price),
+                        tooltip  = item.label or item.name or "unknown",
+                        style    = {
+                            margin = "5px"
+                        },
+                        disabled = false,
+                        sound    = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
+                    }
                 })
             end
-            -- Page arrows
-            sellPage:RegisterElement('pagearrows', {
-                slot = "footer",
-                total = totalPages,
-                current = currentPage,
-                style = {}
-            }, function(data)
-                if data.value == 'forward' then
-                    currentPage = math.min(currentPage + 1, totalPages)
-                elseif data.value == 'back' then
-                    currentPage = math.max(currentPage - 1, 1)
-                end
-                renderPage()
-            end)
-
-            sellPage:RegisterElement('line', { slot = "footer", style = {} })
-            sellPage:RegisterElement('button', {
-                label = _U("BackToStores"),
-                slot = "footer"
-            }, function()
-                BackToMainMenu(shopName)
-            end)
-            sellPage:RegisterElement('bottomline', { slot = "footer", style = {} })
-
-            BCCShopsMainMenu:Open({ startupPage = sellPage })
         end
 
-        renderPage()
+        if #imageBoxItems == 0 then
+            sellPage:RegisterElement("text", {
+                value = _U("noSellableItemsInCategory"),
+                style = { fontSize = "16px", color = "#bbb", textAlign = "center", marginTop = "10px" },
+                slot  = "content"
+            })
+        else
+            sellPage:RegisterElement('imageboxcontainer', {
+                slot  = "content",
+                items = imageBoxItems
+            }, function(data)
+                local chosen = indexMap[data.child.index]
+                if not chosen then return end
+
+                RequestSellQuantity({
+                    item_name      = chosen.name,
+                    item_label     = chosen.label,
+                    sell_price     = chosen.sell_price,
+                    level_required = chosen.level,
+                    sell_quantity  = chosen.sell_quantity
+                }, shopName, kind == "weapon")
+            end)
+        end
+
+        -- Page arrows
+        sellPage:RegisterElement('pagearrows', {
+            slot    = "footer",
+            total   = totalPages,
+            current = currentPage,
+            style   = {},
+            sound   = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
+
+        }, function(nav)
+            if nav.value == 'forward' then
+                currentPage = math.min(currentPage + 1, totalPages)
+            elseif nav.value == 'back' then
+                currentPage = math.max(currentPage - 1, 1)
+            end
+            SellMenu(shopName, currentPage) -- reopen on the new page
+        end)
+
+        sellPage:RegisterElement('line', {
+            slot = "footer",
+            style = {}
+        })
+
+        sellPage:RegisterElement('button', {
+            label = _U("BackToStores"),
+            slot  = "footer",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
+        }, function()
+            BackToMainMenu(shopName)
+        end)
+
+        sellPage:RegisterElement('bottomline', {
+            slot = "footer",
+            style = {}
+        })
+
+        BCCShopsMainMenu:Open({ startupPage = sellPage })
     end)
 end
 
@@ -156,7 +174,9 @@ function RequestSellQuantity(item, shopName, isWeapon)
     devPrint("Received player level: " .. playerLevel)
 
     if item.level_required > playerLevel then
-        Notify("You need to be level " .. item.level_required .. " to sell this " .. (isWeapon and "weapon" or "item") .. ".", "error", 4000)
+        Notify(
+        "You need to be level " .. item.level_required .. " to sell this " .. (isWeapon and "weapon" or "item") .. ".",
+            "error", 4000)
         return
     end
 
@@ -181,7 +201,10 @@ function RequestSellQuantity(item, shopName, isWeapon)
         <div style="margin: auto; padding: 20px 30px;">
             <div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
                 <div style="flex-shrink: 0;">
-                    <img src="]] .. imgPath .. [[" alt="]] .. item.item_label .. [[" style="width: 100px; height: 100px; border: 1px solid #bbb; border-radius: 6px;">
+                    <img src="]] ..
+    imgPath ..
+    [[" alt="]] ..
+    item.item_label .. [[" style="width: 100px; height: 100px; border: 1px solid #bbb; border-radius: 6px;">
                 </div>
                 <table style="flex-grow: 1; width: 100%; border-collapse: collapse; font-size: 16px;">
                     <tr style="border-bottom: 1px solid #ddd;">
@@ -205,9 +228,18 @@ function RequestSellQuantity(item, shopName, isWeapon)
         </div>
     ]]
 
-    inputPage:RegisterElement('header', { value = shopName, slot = "header" })
-    inputPage:RegisterElement('html', { value = { html }, slot = "header" })
-    inputPage:RegisterElement('line', { slot = "header", style = {} })
+    inputPage:RegisterElement('header', {
+        value = shopName,
+        slot = "header"
+    })
+    inputPage:RegisterElement('html', {
+        value = { html },
+        slot = "header"
+    })
+    inputPage:RegisterElement('line', {
+        slot = "header",
+        style = {}
+    })
 
     inputPage:RegisterElement('input', {
         label = _U('storeQty'),
@@ -227,12 +259,18 @@ function RequestSellQuantity(item, shopName, isWeapon)
         end
     end)
 
-    inputPage:RegisterElement('line', { slot = "footer", style = {} })
+    inputPage:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
     inputPage:RegisterElement('button', {
         label = _U('storeSell'),
         slot = "footer",
         style = {},
-        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if quantity then
             devPrint("Proceeding with sale of quantity: " .. quantity)
@@ -248,7 +286,10 @@ function RequestSellQuantity(item, shopName, isWeapon)
         label = _U('BackToItems'),
         slot = "footer",
         style = {},
-        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+        sound = { 
+            action = "SELECT", 
+            soundset = "RDRO_Character_Creator_Sounds" 
+        }
     }, function()
         SellMenu(shopName)
     end)

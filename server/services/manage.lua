@@ -58,7 +58,7 @@ BccUtils.RPC:Register("bcc-shops:createNPCStore", function(params, cb, source)
         else
             devPrint("Failed to create NPC shop.")
             NotifyClient(source, _U('shopCreatedFail'), "error")
-            cb(false, "Failed to create NPC shop.")
+            cb(false)
         end
     end)
 end)
@@ -366,7 +366,7 @@ BccUtils.RPC:Register("bcc-shops:SetPlayerShopBlip", function(params, cb, src)
         cb(true)
     else
         devPrint(("Failed to update blip for shop '%s'"):format(shopName))
-        cb(false, "No rows updated")
+        cb(false)
     end
 end)
 
@@ -376,7 +376,7 @@ BccUtils.RPC:Register("bcc-shops:SetShopBlipEnabled", function(params, cb, src)
 
     if not shopName or enabled == nil then
         devPrint("Missing shopName or enabled in SetShopBlipEnabled")
-        return cb(false, "Invalid parameters")
+        return cb(false)
     end
 
     local affected = MySQL.update.await(
@@ -389,7 +389,7 @@ BccUtils.RPC:Register("bcc-shops:SetShopBlipEnabled", function(params, cb, src)
         cb(true)
     else
         devPrint(("No rows updated for shop '%s'"):format(shopName))
-        cb(false, "No update occurred")
+        cb(false)
     end
 end)
 
@@ -445,7 +445,7 @@ BccUtils.RPC:Register("bcc-shops:DeleteCategory", function(params, cb, src)
         return cb(true)
     else
         devPrint(("[DeleteCategory] Nothing deleted for id " .. categoryId .. " (not found?)"))
-        return cb(false, "Category not found")
+        return cb(false)
     end
 end)
 

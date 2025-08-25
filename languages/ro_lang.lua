@@ -281,5 +281,7 @@ Locales["ro_lang"] = {
     storeAddFromInventory           = "Adauga Articole Din Inventar",
     addWeaponTitle                  = "Adauga Arma",
     selectCategory                  = "Selecteaza Categoria",
-    price_limit_exceeded            = "Pretul introdus depaseste limita maxima permisa."
+    price_limit_exceeded            = "Pretul introdus depaseste limita maxima permisa.",
+    maxSellPrice                    = "Pretul maxim de vanzare",
+    maxBuyPrice                     = "Pretul maxim de cumparare"
 }

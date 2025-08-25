@@ -849,7 +849,7 @@ BccUtils.RPC:Register("bcc-shops:AddItemNPCShop", function(params, cb, src)
 
     if not categoryId or categoryId <= 0 then
         devPrint("[ERROR] Invalid category_id: " .. tostring(params.category_id))
-        return cb(false, "Invalid category ID")
+        return cb(false)
     end
 
     -- Optional: Validate if category exists
@@ -860,7 +860,7 @@ BccUtils.RPC:Register("bcc-shops:AddItemNPCShop", function(params, cb, src)
 
     if not catCheck then
         devPrint("[ERROR] Category ID not found in database: " .. categoryId)
-        return cb(false, "Category not found")
+        return cb(false)
     end
 
     local shopResult = MySQL.query.await(
@@ -869,7 +869,7 @@ BccUtils.RPC:Register("bcc-shops:AddItemNPCShop", function(params, cb, src)
     )
     if not shopResult or #shopResult == 0 then
         devPrint("[ERROR] Shop not found: " .. tostring(shopName))
-        return cb(false, "Shop not found")
+        return cb(false)
     end
 
     local shop_id = shopResult[1].shop_id
@@ -1080,13 +1080,15 @@ BccUtils.RPC:Register("bcc-shops:AddWeaponItem", function(params, cb, src)
     local quantity = tonumber(params.quantity) or 1
 
     if not shopName or not weaponName or not weaponId then
-        cb(false, "Missing required parameters")
+        devPrint("Missing required parameters")
+        cb(false)
         return
     end
 
     local shopResult = MySQL.query.await('SELECT shop_id, webhook_link, shop_name FROM bcc_shops WHERE shop_name = ?', { shopName })
     if not shopResult or not shopResult[1] then
-        cb(false, "Shop not found.")
+        devPrint("Shop not found: " .. tostring(shopName))
+        cb(false)
         return
     end
 
@@ -1124,7 +1126,8 @@ BccUtils.RPC:Register("bcc-shops:AddWeaponItem", function(params, cb, src)
     end
 
     if not dbOperationSuccess then
-        cb(false, "Database insert/update failed.")
+        devPrint("Database insert/update failed.")
+        cb(false)
         return
     end
 
@@ -1132,7 +1135,7 @@ BccUtils.RPC:Register("bcc-shops:AddWeaponItem", function(params, cb, src)
     exports.vorp_inventory:subWeapon(src, weaponId, function(success)
         if not success then
             devPrint("Failed to remove weapon from player inventory.")
-            cb(false, "Failed to remove weapon from inventory.")
+            cb(false)
             return
         end
 
@@ -1313,13 +1316,15 @@ BccUtils.RPC:Register("bcc-shops:EditItemNPCShop", function(params, cb, src)
     local sellQuantity  = params.sell_quantity
 
     if not shopName or not itemName then
-        cb(false, "[ERROR] shopName or itemName missing")
+        devPrint("Missing required parameters")
+        cb(false)
         return
     end
 
     MySQL.query("SELECT shop_id FROM bcc_shops WHERE shop_name = ?", { shopName }, function(shopResults)
         if not shopResults or #shopResults == 0 then
-            cb(false, "Shop not found.")
+            devPrint("Shop not found: " .. tostring(shopName))
+            cb(false)
             return
         end
 
@@ -1327,7 +1332,7 @@ BccUtils.RPC:Register("bcc-shops:EditItemNPCShop", function(params, cb, src)
 
         MySQL.update([[
             UPDATE bcc_shop_items
-            SET item_label = ?, buy_price = ?, sell_price = ?, category = ?,
+            SET item_label = ?, buy_price = ?, sell_price = ?, category_id = ?,
                 level_required = ?, buy_quantity = ?, sell_quantity = ?
             WHERE shop_id = ? AND item_name = ?
         ]], {
@@ -1344,13 +1349,14 @@ BccUtils.RPC:Register("bcc-shops:EditItemNPCShop", function(params, cb, src)
             if rowsChanged and rowsChanged > 0 then
                 cb(true)
             else
-                cb(false, "Item not updated. It may not exist.")
+                devPrint("No rows updated for item: " .. tostring(itemName))
+                cb(false)
             end
         end)
     end)
 end)
 
-BccUtils.RPC:Register("bcc-shops:EditWeaponItem", function(params, cb, src)
+BccUtils.RPC:Register("bcc-shops:EditItemNPCWeapon", function(params, cb, src)
     local shopName      = params.shopName
     local weaponName    = params.weaponName
     local weaponLabel   = params.weaponLabel
@@ -1362,13 +1368,15 @@ BccUtils.RPC:Register("bcc-shops:EditWeaponItem", function(params, cb, src)
     local sellQty = tonumber(params.sell_quantity)
 
     if not shopName or not weaponName then
-        cb(false, "Shop name or weapon name is missing")
+        devPrint("Missing required parameters")
+        cb(false)
         return
     end
 
     MySQL.query('SELECT shop_id FROM bcc_shops WHERE shop_name = ?', { shopName }, function(shopResults)
         if not shopResults or #shopResults == 0 then
-            cb(false, "Shop not found.")
+            devPrint("Shop not found: " .. tostring(shopName))
+            cb(false)
             return
         end
 
@@ -1399,8 +1407,132 @@ BccUtils.RPC:Register("bcc-shops:EditWeaponItem", function(params, cb, src)
             if rowsChanged and rowsChanged > 0 then
                 cb(true)
             else
-                cb(false, "Failed to update weapon item.")
+                devPrint("Failed to update weapon item.")
+                cb(false)
             end
+        end)
+    end)
+end)
+
+BccUtils.RPC:Register("bcc-shops:EditItemPlayerShop", function(params, cb, src)
+    local shopName      = params.shopName
+    local itemName      = params.itemName
+    local itemLabel     = params.itemLabel
+    local buyPrice      = params.buyPrice
+    local sellPrice     = params.sellPrice
+    local category      = params.category
+    local levelRequired = params.levelRequired
+    local sellQuantity  = tonumber(params.sell_quantity)
+
+    if not shopName or not itemName then
+        devPrint("[ERROR] shopName or itemName missing")
+        cb(false)
+        return
+    end
+
+    MySQL.query("SELECT shop_id FROM bcc_shops WHERE shop_name = ?", { shopName }, function(shopResults)
+        if not shopResults or #shopResults == 0 then
+            devPrint("[ERROR] Shop not found.")
+            cb(false)
+            return
+        end
+
+        local shopId = shopResults[1].shop_id
+
+        -- Ensure item exists; only update (no insert, no buy_quantity changes)
+        MySQL.query("SELECT item_id FROM bcc_shop_items WHERE shop_id = ? AND item_name = ?", {
+            shopId, itemName
+        }, function(itemResults)
+            if not itemResults or not itemResults[1] then
+                cb(false, "Item not found in this shop.")
+                return
+            end
+
+            local itemId = itemResults[1].item_id
+
+            MySQL.update([[
+                UPDATE bcc_shop_items
+                SET item_label = ?, buy_price = ?, sell_price = ?, category_id = ?,
+                    level_required = ?, sell_quantity = ?
+                WHERE item_id = ?
+            ]], {
+                itemLabel,
+                buyPrice,
+                sellPrice,
+                category,
+                levelRequired,
+                sellQuantity,
+                itemId
+            }, function(rowsChanged)
+                if rowsChanged and rowsChanged > 0 then
+                    cb(true)
+                else
+                    devPrint("[ERROR] Item not updated.")
+                    cb(false)
+                end
+            end)
+        end)
+    end)
+end)
+
+-- Edit ITEM in a player shop (no buy_quantity updates)
+BccUtils.RPC:Register("bcc-shops:EditItemPlayerShop", function(params, cb, src)
+    local shopName      = params.shopName
+    local itemName      = params.itemName
+    local itemLabel     = params.itemLabel
+    local buyPrice      = params.buyPrice
+    local sellPrice     = params.sellPrice
+    local category      = params.category
+    local levelRequired = params.levelRequired
+    local sellQuantity  = tonumber(params.sell_quantity)
+
+    if not shopName or not itemName then
+        devPrint("[ERROR] shopName or itemName missing")
+        cb(false)
+        return
+    end
+
+    MySQL.query("SELECT shop_id FROM bcc_shops WHERE shop_name = ?", { shopName }, function(shopResults)
+        if not shopResults or #shopResults == 0 then
+            devPrint("[ERROR] Shop not found.")
+            cb(false)
+            return
+        end
+
+        local shopId = shopResults[1].shop_id
+
+        -- Ensure item exists; only update (no insert, no buy_quantity changes)
+        MySQL.query("SELECT item_id FROM bcc_shop_items WHERE shop_id = ? AND item_name = ?", {
+            shopId, itemName
+        }, function(itemResults)
+            if not itemResults or not itemResults[1] then
+                cb(false, "Item not found in this shop.")
+                return
+            end
+
+            local itemId = itemResults[1].item_id
+
+            MySQL.update([[
+                UPDATE bcc_shop_items
+                SET item_label = ?, buy_price = ?, sell_price = ?, category_id = ?,
+                    level_required = ?, sell_quantity = ?
+                WHERE item_id = ?
+            ]], {
+                itemLabel,
+                buyPrice,
+                sellPrice,
+                category,
+                levelRequired,
+                sellQuantity,
+                itemId
+            }, function(rowsChanged)
+                if rowsChanged and rowsChanged > 0 then
+                    cb(true)
+                else
+                    devPrint("[ERROR] Item not updated.")
+                    cb(false)
+                end
+            end)
         end)
     end)
 end)
@@ -1479,11 +1611,9 @@ BccUtils.RPC:Register("bcc-shops:RemoveShopItem", function(params, cb, source)
             devPrint("[RemoveShopItem] Item added to inventory: " .. itemName .. " x" .. quantity)
         end
 
-        NotifyClient(source, "Item removed successfully", "success")
         return cb(true)
     else
         devPrint("[RemoveShopItem] Failed to update item quantity in DB")
-        NotifyClient(source, "Failed to update item quantity in the shop", "error")
         return cb(nil)
     end
 end)

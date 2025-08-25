@@ -9,14 +9,24 @@ function OpenNPCBuySellMenu(shopName)
 
     NPCbuySellPage:RegisterElement('button', {
         label = _U('storeBuyItems'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenBuyMenu(shopName, "npc")
     end)
 
     NPCbuySellPage:RegisterElement('button', {
         label = _U('storeSellItems'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenSellMenu(shopName, "npc")
     end)
@@ -27,7 +37,12 @@ function OpenNPCBuySellMenu(shopName)
         -- Add from player inventory → NPC shop
         NPCbuySellPage:RegisterElement('button', {
             label = _U('storeAddFromInventory'),
-            slot  = "content"
+            slot  = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenNPCAddFromPlayerInventory(shopName)
         end)
@@ -35,7 +50,12 @@ function OpenNPCBuySellMenu(shopName)
         -- Add manually (your existing form)
         NPCbuySellPage:RegisterElement('button', {
             label = _U('storeAddItems'),
-            slot  = "content"
+            slot  = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             devPrint(("Opening Add Items (manual) for NPC store: %s"):format(shopName))
             OpenAddNPCItemMenuInternal(shopName)
@@ -44,52 +64,14 @@ function OpenNPCBuySellMenu(shopName)
         -- Edit Items & Weapons
         NPCbuySellPage:RegisterElement('button', {
             label = _U('storeEditItems'),
-            slot  = "content"
+            slot  = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
-            devPrint(("Fetching items+weapons for edit menu: %s"):format(shopName))
-
-            BccUtils.RPC:Call("bcc-shops:GetItemsForShop", { shopName = shopName }, function(success, result)
-                if not success or type(result) ~= "table" then
-                    Notify(result or _U("failedToFetchItems"), "error", 4000)
-                    return
-                end
-
-                local editListPage = BCCShopsMainMenu:RegisterPage('bcc-shops:edititemlist:' .. shopName)
-
-                editListPage:RegisterElement('header', {
-                    value = _U('selectItemToEdit'),
-                    slot  = "header"
-                })
-
-                for _, row in ipairs(result) do
-                    local label = row.item_label or row.weapon_label or row.item_name or row.weapon_name or "unknown"
-
-                    editListPage:RegisterElement('button', {
-                        label = label,
-                        slot  = "content"
-                    }, function()
-                        if row.is_weapon == 1 then
-                            OpenEditNPCWeaponMenu(shopName, row)
-                        else
-                            OpenEditNPCItemMenu(shopName, row)
-                        end
-                    end)
-                end
-
-                editListPage:RegisterElement('line', {
-                    slot = "footer"
-                })
-                editListPage:RegisterElement('button', {
-                    label = _U('backButton'),
-                    slot  = "footer"
-                }, function()
-                    OpenNPCBuySellMenu(shopName)
-                end)
-                editListPage:RegisterElement('bottomline', {
-                    slot = "footer"
-                })
-                BCCShopsMainMenu:Open({ startupPage = editListPage })
-            end)
+            OpenEditNPCShopMenu(shopName)
         end)
     else
         devPrint(("Player is not an admin, hiding admin options for store: %s"):format(shopName))
@@ -111,8 +93,14 @@ function OpenNPCAddFromPlayerInventory(shopName)
     local weapons   = result.weapons or {}
 
     local page      = BCCShopsMainMenu:RegisterPage('bcc-shops:npc:add_from_player_inv:' .. tostring(shopName))
-    page:RegisterElement('header', { value = _U('inventory') .. " → " .. shopName, slot = "header" })
-    page:RegisterElement('line', { slot = "header", style = {} })
+    page:RegisterElement('header', {
+        value = _U('inventory') .. " → " .. shopName,
+        slot = "header"
+    })
+    page:RegisterElement('line', {
+        slot = "header",
+        style = {}
+    })
 
     local combinedEntries, imageBoxItems = {}, {}
     local idx = 0
@@ -132,7 +120,7 @@ function OpenNPCAddFromPlayerInventory(shopName)
         -- description / meta (if inventory system provides them)
         item.custom_desc                  = item.custom_desc or item.description or item.desc or nil
         item.weapon_info                  = item.weapon_info or item.metadata or item.meta or item.info or item.data or
-        nil
+            nil
 
         idx                               = idx + 1
         combinedEntries[idx]              = item
@@ -144,8 +132,13 @@ function OpenNPCAddFromPlayerInventory(shopName)
                 img      = imgPath,
                 label    = "x" .. count,
                 tooltip  = label,
-                style    = { margin = "5px" },
-                sound    = { action = "SELECT", soundset = "HUD_SHOP" },
+                style    = {
+                    margin = "5px"
+                },
+                sound    = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                },
                 disabled = false
             }
         }
@@ -180,8 +173,13 @@ function OpenNPCAddFromPlayerInventory(shopName)
                 img      = imgPath,
                 label    = "x" .. weapon.count,
                 tooltip  = wLabel .. " | SN: " .. wSerial,
-                style    = { margin = "5px" },
-                sound    = { action = "SELECT", soundset = "HUD_SHOP" },
+                style    = {
+                    margin = "5px"
+                },
+                sound    = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                },
                 disabled = (wId == nil)
             }
         }
@@ -203,11 +201,25 @@ function OpenNPCAddFromPlayerInventory(shopName)
         OpenNPCAddDetailMenu(shopName, chosen)
     end)
 
-    page:RegisterElement('line', { slot = "footer", style = {} })
-    page:RegisterElement('button', { label = _U('backButton'), slot = "footer" }, function()
+    page:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
+    page:RegisterElement('button', {
+        label = _U('backButton'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
+    }, function()
         OpenNPCBuySellMenu(shopName)
     end)
-    page:RegisterElement('bottomline', { slot = "footer", style = {} })
+    page:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
 
     BCCShopsMainMenu:Open({ startupPage = page })
 end
@@ -330,8 +342,18 @@ function OpenNPCAddDetailMenu(shopName, entry)
         end
     end
 
-    page:RegisterElement('line', { slot = "footer" })
-    page:RegisterElement('button', { label = _U('submit'), slot = "footer" }, function()
+    page:RegisterElement('line', {
+        slot = "footer"
+    })
+    page:RegisterElement('button', {
+        label = _U('submit'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
+    }, function()
         -- basic validation
         if (buyQty <= 0 and sellQty <= 0) or not selectedCategoryId then
             return Notify(_U('missingFields'), "error", 4000)
@@ -395,11 +417,21 @@ function OpenNPCAddDetailMenu(shopName, entry)
         end
     end)
 
-    page:RegisterElement('button', { label = _U('backButton'), slot = "footer" }, function()
+    page:RegisterElement('button', {
+        label = _U('backButton'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
+    }, function()
         OpenNPCAddFromPlayerInventory(shopName)
     end)
 
-    page:RegisterElement('bottomline', { slot = "footer" })
+    page:RegisterElement('bottomline', {
+        slot = "footer"
+    })
     BCCShopsMainMenu:Open({ startupPage = page })
 end
 
@@ -504,7 +536,13 @@ function OpenAddNPCItemMenuInternal(shopName)
     addItemPage:RegisterElement('line', { slot = "footer", style = {} })
 
     addItemPage:RegisterElement('button', {
-        label = _U('submit'), slot = "footer"
+        label = _U('submit'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if itemName ~= "" and itemLabel ~= "" and itemBuyPrice > 0 then
             BccUtils.RPC:Call("bcc-shops:AddItemNPCShop", {
@@ -533,18 +571,115 @@ function OpenAddNPCItemMenuInternal(shopName)
     end)
 
     addItemPage:RegisterElement('button', {
-        label = _U('backButton'), slot = "footer"
+        label = _U('backButton'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenNPCBuySellMenu(shopName)
     end)
 
-    addItemPage:RegisterElement('bottomline', { slot = "footer", style = {} })
+    addItemPage:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
 
     BCCShopsMainMenu:Open({ startupPage = addItemPage })
 end
 
+function OpenEditNPCShopMenu(shopName)
+    devPrint(("Fetching items+weapons for edit menu: %s"):format(shopName))
+
+    BccUtils.RPC:Call("bcc-shops:GetItemsForShop", { shopName = shopName }, function(success, result)
+        if not success or type(result) ~= "table" then
+            Notify(result or _U("failedToFetchItems"), "error", 4000)
+            return
+        end
+
+        -- force a new page object each time (prevents stale RegisteredElements on RouteTo)
+        local uniqueId = "uniqueid-" .. math.random(1000, 9999)
+        Pages.editListPage = BCCShopsMainMenu:RegisterPage('bcc-shops:edititemlist:' .. shopName .. ":" .. uniqueId)
+
+        Pages.editListPage:RegisterElement('header', {
+            value = _U('selectItemToEdit'),
+            slot  = "header"
+        })
+
+        local imageBoxItems = {}
+        local combinedRows  = {}
+        local idx           = 0
+
+        for _, row in ipairs(result) do
+            -- show updated label if present
+            local displayName = row.item_label or row.weapon_label or row.item_name or row.weapon_name or "unknown"
+
+            -- keep image key stable off the internal name
+            local imageKey    = (row.item_name or row.weapon_name):lower()
+            local img         = "nui://vorp_inventory/html/img/items/" .. imageKey .. ".png"
+
+            idx               = idx + 1
+            combinedRows[idx] = row
+
+            table.insert(imageBoxItems, {
+                type  = "imagebox",
+                index = idx,
+                data  = {
+                    img      = img,
+                    tooltip  = displayName, -- reflects edits
+                    style    = {
+                        margin = "5px"
+                    },
+                    sound    = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    },
+                    disabled = false
+                }
+            })
+        end
+
+        Pages.editListPage:RegisterElement('imageboxcontainer', {
+            slot  = "content",
+            items = imageBoxItems
+        }, function(data)
+            local chosen = combinedRows[data.child.index]
+            if not chosen then return end
+
+            if chosen.is_weapon == 1 then
+                OpenEditNPCWeaponMenu(shopName, chosen)
+            else
+                OpenEditNPCItemMenu(shopName, chosen)
+            end
+        end)
+
+        Pages.editListPage:RegisterElement('line', { slot = "footer" })
+
+        Pages.editListPage:RegisterElement('button', {
+            label = _U('backButton'),
+            slot  = "footer",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
+        }, function()
+            OpenNPCBuySellMenu(shopName)
+        end)
+
+        Pages.editListPage:RegisterElement('bottomline', {
+            slot = "footer"
+        })
+
+        BCCShopsMainMenu:Open({ startupPage = Pages.editListPage })
+        Pages.editListPage:RouteTo() -- ensure we navigate to the freshly built page
+    end)
+end
+
 function OpenEditNPCItemMenu(shopName, item)
-    devPrint("Opening Edit Item Menu for: " .. item.item_name)
+    devPrint("Opening Edit Item Menu for: " .. (item.item_name or "unknown"))
     local editPage = BCCShopsMainMenu:RegisterPage('bcc-shops:editnpcitem:page')
 
     editPage:RegisterElement('header', {
@@ -552,108 +687,134 @@ function OpenEditNPCItemMenu(shopName, item)
         slot = "header"
     })
 
-    local itemLabel     = item.item_label
-    local itemBuyPrice  = item.buy_price
+    local itemLabel = item.item_label
+    local itemBuyPrice = item.buy_price
     local itemSellPrice = item.sell_price
-    local itemBuyStock  = item.buy_quantity
+    local itemBuyStock = item.buy_quantity
     local itemSellStock = item.sell_quantity
-    local itemCategory  = item.category or "default"
-    local itemLevel     = item.level_required or 0
+    local itemLevel = item.level_required
+    local currentCategoryId = tonumber(item.category_id or item.category) or nil
+
+    local categories = BccUtils.RPC:CallAsync("bcc-shops:GetShopCategories")
+    local categoryOptions, selectedCategoryId = {}, currentCategoryId
+
+    if categories and #categories > 0 then
+        for _, cat in ipairs(categories) do
+            local id = tonumber(cat.value) or tonumber(cat.id)
+            if id then
+                categoryOptions[#categoryOptions + 1] = {
+                    text  = cat.text or cat.label or ("Category " .. tostring(id)),
+                    value = tostring(id)
+                }
+                if not selectedCategoryId then
+                    selectedCategoryId = id
+                end
+            end
+        end
+    else
+        Notify(_U("noCategoriesFound"), "error", 4000)
+        return
+    end
 
     editPage:RegisterElement('input', {
         label = _U('itemLabel'),
-        slot = "content",
-        type = "text",
-        default = itemLabel,
-        placeholder = itemLabel
+        placeholder = itemLabel,
+        slot = "content"
     }, function(data)
-        itemLabel = data.value or itemLabel
+        itemLabel = data.value
     end)
 
     editPage:RegisterElement('input', {
         label = _U('buyPrice'),
+        placeholder = tostring(itemBuyPrice),
         slot = "content",
-        type = "number",
-        default = itemBuyPrice,
-        min = 0,
-        placeholder = tostring(itemBuyPrice)
+        style = {}
     }, function(data)
-        itemBuyPrice = tonumber(data.value) or itemBuyPrice
+        itemBuyPrice = tonumber(data.value)
     end)
 
     editPage:RegisterElement('input', {
         label = _U('sellPrice'),
+        placeholder = tostring(itemSellPrice),
         slot = "content",
-        type = "number",
-        default = itemSellPrice,
-        min = 0,
-        placeholder = tostring(itemSellPrice)
+        style = {}
     }, function(data)
-        itemSellPrice = tonumber(data.value) or itemSellPrice
+        itemSellPrice = tonumber(data.value)
     end)
 
     editPage:RegisterElement('input', {
         label = _U('buyStock'),
+        placeholder = tostring(itemBuyStock),
         slot = "content",
-        type = "number",
-        default = itemBuyStock,
-        min = 0,
-        placeholder = tostring(itemBuyStock)
+        style = {}
     }, function(data)
-        itemBuyStock = tonumber(data.value) or itemBuyStock
+        itemBuyStock = tonumber(data.value)
     end)
 
     editPage:RegisterElement('input', {
         label = _U('sellStock'),
+        placeholder = tostring(itemSellStock),
         slot = "content",
-        type = "number",
-        default = itemSellStock,
-        min = 0,
-        placeholder = tostring(itemSellStock)
+        style = {},
     }, function(data)
-        itemSellStock = tonumber(data.value) or itemSellStock
+        itemSellStock = tonumber(data.value)
     end)
 
-    editPage:RegisterElement('input', {
-        label = _U('category'),
-        slot = "content",
-        type = "text",
-        default = itemCategory,
-        placeholder = itemCategory
+    editPage:RegisterElement('dropdown', {
+        label   = _U('category'),
+        slot    = "content",
+        options = categoryOptions,
+        default = tostring(selectedCategoryId or categoryOptions[1].value)
     }, function(data)
-        itemCategory = data.value or itemCategory
+        local v = tonumber(data.value)
+        if v then selectedCategoryId = v end
+        devPrint("Selected category_id (edit): " .. tostring(selectedCategoryId))
     end)
 
     editPage:RegisterElement('input', {
         label = _U('RequiredLevel'),
+        placeholder = tostring(itemLevel),
         slot = "content",
-        type = "number",
-        default = itemLevel,
-        min = 0,
-        placeholder = tostring(itemLevel)
+        style = {},
     }, function(data)
-        itemLevel = tonumber(data.value) or itemLevel
+        itemLevel = tonumber(data.value)
     end)
 
-    editPage:RegisterElement('line', { slot = "footer" })
+    editPage:RegisterElement('line', {
+        slot = "footer"
+    })
 
     editPage:RegisterElement('button', {
-        label = _U('submitChanges'), slot = "footer"
+        label = _U('submitChanges'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
-        BccUtils.RPC:Call("bcc-shops:EditItemNPCShop", {
+        if not selectedCategoryId then
+            return Notify(_U('missingFields') or "Missing category", "error", 4000)
+        end
+
+        local payload = {
             shopName      = shopName,
             itemName      = item.item_name,
             itemLabel     = itemLabel,
             buyPrice      = itemBuyPrice,
             sellPrice     = itemSellPrice,
-            category      = itemCategory,
+            category      = selectedCategoryId,
             levelRequired = itemLevel,
             buy_quantity  = itemBuyStock,
             sell_quantity = itemSellStock,
-        }, function(success)
+        }
+
+        devPrint("[Edit Item] Payload: " .. json.encode(payload))
+
+        BccUtils.RPC:Call("bcc-shops:EditItemNPCShop", payload, function(success)
             if success then
                 Notify(_U('itemUpdated'), "success", 4000)
-                BCCShopsMainMenu:Close()
+                OpenEditNPCShopMenu(shopName)
             else
                 Notify(_U('itemUpdateFailed'), "error", 4000)
             end
@@ -661,20 +822,27 @@ function OpenEditNPCItemMenu(shopName, item)
     end)
 
     editPage:RegisterElement('button', {
-        label = _U('backButton'), slot = "footer"
+        label = _U('backButton'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
-        OpenNPCBuySellMenu(shopName)
+        OpenEditNPCShopMenu(shopName)
     end)
 
-    editPage:RegisterElement('bottomline', { slot = "footer" })
-
+    editPage:RegisterElement('bottomline', {
+        slot = "footer"
+    })
     BCCShopsMainMenu:Open({ startupPage = editPage })
 end
 
 function OpenEditNPCWeaponMenu(shopName, weapon)
     devPrint("Opening Edit Weapon Menu for: " .. (weapon.weapon_name or weapon.item_name or "unknown_weapon"))
 
-    local editPage = BCCShopsMainMenu:RegisterPage('bcc-shops:editnpcweapon:page:' .. tostring(shopName))
+    local editPage  = BCCShopsMainMenu:RegisterPage('bcc-shops:editnpcweapon:page:' .. tostring(shopName))
 
     local wName     = weapon.weapon_name or weapon.item_name or weapon.name or "unknown_weapon"
     local wLabel    = weapon.weapon_label or weapon.item_label or weapon.label or wName
@@ -771,12 +939,18 @@ function OpenEditNPCWeaponMenu(shopName, weapon)
         sellQty = math.max(0, math.floor(tonumber(data.value) or sellQty))
     end)
 
-    -- Footer / submit
-    editPage:RegisterElement('line', { slot = "footer" })
+    editPage:RegisterElement('line', {
+        slot = "footer"
+    })
 
     editPage:RegisterElement('button', {
         label = _U('submitChanges'),
-        slot  = "footer"
+        slot  = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         local payload = {
             shopName      = shopName,
@@ -792,31 +966,40 @@ function OpenEditNPCWeaponMenu(shopName, weapon)
 
         devPrint("[Edit Weapon] Payload: " .. json.encode(payload))
 
-        -- This expects the server RPC to accept buy_quantity/sell_quantity (see server snippet below)
-        BccUtils.RPC:Call("bcc-shops:EditWeaponItem", payload, function(success, err)
+        BccUtils.RPC:Call("bcc-shops:EditItemNPCWeapon", payload, function(success, err)
             if success then
-                Notify(_U('itemUpdated') or "Weapon updated", "success", 4000)
-                BCCShopsMainMenu:Close()
+                Notify(_U('itemUpdated'), "success", 4000)
+                OpenEditNPCShopMenu(shopName)
             else
-                Notify(err or _U('itemUpdateFailed') or "Failed to update weapon", "error", 4000)
+                Notify(err or _U('itemUpdateFailed'), "error", 4000)
             end
         end)
     end)
 
     editPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot  = "footer"
+        slot  = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
-        OpenNPCBuySellMenu(shopName)
+        OpenEditNPCShopMenu(shopName)
     end)
 
-    editPage:RegisterElement('bottomline', { slot = "footer" })
+    editPage:RegisterElement('bottomline', {
+        slot = "footer"
+    })
     BCCShopsMainMenu:Open({ startupPage = editPage })
 end
 
 function OpenCreateNPCStoreMenu(npcs)
-    local npcStorePage = BCCShopsMainMenu:RegisterPage('bcc-shops:createnpcstore')
-    npcStorePage:RegisterElement('header', { value = _U('createNPCStore'), slot = "header" })
+    Pages.npcStorePage = BCCShopsMainMenu:RegisterPage('bcc-shops:createnpcstore')
+    Pages.npcStorePage:RegisterElement('header', {
+        value = _U('createNPCStore'),
+        slot = "header"
+    })
 
     local storeDetails = {
         shopName = '',
@@ -826,7 +1009,7 @@ function OpenCreateNPCStoreMenu(npcs)
         npcHeading = nil
     }
 
-    npcStorePage:RegisterElement('input', {
+    Pages.npcStorePage:RegisterElement('input', {
         label = _U('storeName'),
         slot = "content",
         type = "text",
@@ -835,14 +1018,22 @@ function OpenCreateNPCStoreMenu(npcs)
         storeDetails.shopName = data.value
     end)
 
-    npcStorePage:RegisterElement('input', {
+    Pages.npcStorePage:RegisterElement('input', {
         label = _U('shopLocation'),
         slot = "content",
         type = "text",
         placeholder = _U('fillShopLocation')
     }, function(data) storeDetails.shopLocation = data.value end)
 
-    npcStorePage:RegisterElement('button', { label = _U('setCoordinates'), slot = "content" }, function()
+    Pages.npcStorePage:RegisterElement('button', {
+        label = _U('setCoordinates'),
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
+    }, function()
         local ped = PlayerPedId()
         local playerCoords = GetEntityCoords(ped)
         local playerHeading = GetEntityHeading(ped)
@@ -853,8 +1044,15 @@ function OpenCreateNPCStoreMenu(npcs)
         Notify(_U('coordinatesSet') .. playerCoords.x .. playerCoords.y .. playerCoords.z .. playerHeading, "info", 4000)
     end)
 
-
-    npcStorePage:RegisterElement('button', { label = _U('confirmCreateStore'), slot = "footer" }, function()
+    Pages.npcStorePage:RegisterElement('button', {
+        label = _U('confirmCreateStore'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
+    }, function()
         if storeDetails.shopName == '' then
             Notify(_U('fillStoreName'), "error", 4000)
         elseif storeDetails.shopLocation == '' then
@@ -884,11 +1082,26 @@ function OpenCreateNPCStoreMenu(npcs)
         end
     end)
 
-    npcStorePage:RegisterElement('button', { label = _U('backButton'), slot = "footer" }, function()
+    Pages.npcStorePage:RegisterElement('line', {
+        slot = "footer"
+    })
+
+    Pages.npcStorePage:RegisterElement('button', {
+        label = _U('backButton'),
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
+    }, function()
         OpenCreateStoreMenu(npcs)
     end)
 
-    BCCShopsMainMenu:Open({ startupPage = npcStorePage })
+    Pages.npcStorePage:RegisterElement('bottomline', {
+        slot = "footer"
+    })
+    BCCShopsMainMenu:Open({ startupPage = Pages.npcStorePage })
 end
 
 function OpenDeleteNPCStoresMenu()
@@ -901,7 +1114,12 @@ function OpenDeleteNPCStoresMenu()
     for _, store in ipairs(npcStores) do
         deleteNPCStoresPage:RegisterElement('button', {
             label = store.shop_name,
-            slot = "content"
+            slot = "content",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenDeleteConfirmationMenu(store.shop_id, store.shop_name, "npc")
         end)
@@ -914,7 +1132,12 @@ function OpenDeleteNPCStoresMenu()
 
     deleteNPCStoresPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenDeleteStoresMenu()
     end)
@@ -923,7 +1146,6 @@ function OpenDeleteNPCStoresMenu()
         slot = "footer",
         style = {}
     })
-
 
     BCCShopsMainMenu:Open({ startupPage = deleteNPCStoresPage })
 end

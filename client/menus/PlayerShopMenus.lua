@@ -1,5 +1,3 @@
-local MAX_SELL_PRICE = Config.MAX_SELL_PRICE
-
 function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAccess)
     devPrint("Opening store menu for shop: " .. shopName)
     devPrint("Is player owner: " .. tostring(isOwner))
@@ -13,14 +11,24 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
     playerbuySellPage:RegisterElement('button', {
         label = _U("storeBuyItems"),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenBuyMenu(shopName, "player")
     end)
 
     playerbuySellPage:RegisterElement('button', {
         label = _U("storeSellItems"),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenSellMenu(shopName, "player")
     end)
@@ -34,7 +42,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
         playerbuySellPage:RegisterElement('button', {
             label = _U("manageStore"),
-            slot = "footer"
+            slot = "footer",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             local playerManagePage = BCCShopsMainMenu:RegisterPage('bcc-shops:player:manage:page')
             playerManagePage:RegisterElement('header', {
@@ -43,7 +56,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
             })
             playerManagePage:RegisterElement('button', {
                 label = _U("storeManageItems"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 local managePlayerItems = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerItems:page')
                 managePlayerItems:RegisterElement('header', {
@@ -53,20 +71,35 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerItems:RegisterElement('button', {
                     label = _U("storeAddItems"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     OpenAddPlayerItemMenu(shopName)
                 end)
                 managePlayerItems:RegisterElement('button', {
                     label = _U("storeEditItems"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     OpenEditItemMenu(shopName, "player")
                 end)
 
                 managePlayerItems:RegisterElement('button', {
                     label = _U("storeRemoveItems"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     OpenRemovePlayerItemMenu(shopName)
                 end)
@@ -77,7 +110,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerItems:RegisterElement('button', {
                     label = _U('backButton'),
-                    slot = "footer"
+                    slot = "footer",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     playerManagePage:RouteTo()
                 end)
@@ -93,7 +131,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
             playerManagePage:RegisterElement('button', {
                 label = _U("ledgerButton"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 local managePlayerLedger = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerLedger:page')
                 local addAmount, removeAmount = "", ""
@@ -105,7 +148,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerLedger:RegisterElement('button', {
                     label = _U("addMoneyToLedger"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     local managePlayerLedgerAdd = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerLedgerAdd:page')
 
@@ -126,7 +174,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     managePlayerLedgerAdd:RegisterElement('button', {
                         label = _U("confirmAddMoney"),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         local amount = tonumber(addAmount)
                         if amount and amount > 0 then
@@ -150,20 +203,34 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     managePlayerLedgerAdd:RegisterElement('button', {
                         label = _U('backButton'),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         managePlayerLedger:RouteTo()
                     end)
 
-                    managePlayerLedgerAdd:RegisterElement('bottomline', { slot = "footer" })
-                    managePlayerLedgerAdd:RegisterElement('line', { slot = "content" })
+                    managePlayerLedgerAdd:RegisterElement('bottomline', {
+                        slot = "footer"
+                    })
+                    managePlayerLedgerAdd:RegisterElement('line', {
+                        slot = "content"
+                    })
 
                     BCCShopsMainMenu:Open({ startupPage = managePlayerLedgerAdd })
                 end)
 
                 managePlayerLedger:RegisterElement('button', {
                     label = _U("removeMoneyFromLedger"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     local managePlayerLedgerRemove = BCCShopsMainMenu:RegisterPage(
                         'bcc-shops:managePlayerLedgerRemove:page')
@@ -181,11 +248,18 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                         removeAmount = data.value
                     end)
 
-                    managePlayerLedgerRemove:RegisterElement('line', { slot = "footer" })
+                    managePlayerLedgerRemove:RegisterElement('line', {
+                        slot = "footer"
+                    })
 
                     managePlayerLedgerRemove:RegisterElement('button', {
                         label = _U("confirmRemoveMoney"),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         local amount = tonumber(removeAmount)
                         if amount and amount > 0 then
@@ -209,33 +283,54 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     managePlayerLedgerRemove:RegisterElement('button', {
                         label = _U('backButton'),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         managePlayerLedger:RouteTo()
                     end)
 
-                    managePlayerLedgerRemove:RegisterElement('bottomline', { slot = "footer" })
+                    managePlayerLedgerRemove:RegisterElement('bottomline', {
+                        slot = "footer"
+                    })
 
                     BCCShopsMainMenu:Open({ startupPage = managePlayerLedgerRemove })
                 end)
 
-                managePlayerLedger:RegisterElement('line', { slot = "footer" })
+                managePlayerLedger:RegisterElement('line', {
+                    slot = "footer"
+                })
 
                 managePlayerLedger:RegisterElement('button', {
                     label = _U('backButton'),
-                    slot = "footer"
+                    slot = "footer",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     playerManagePage:RouteTo()
                 end)
 
-                managePlayerLedger:RegisterElement('bottomline', { slot = "footer" })
+                managePlayerLedger:RegisterElement('bottomline', {
+                    slot = "footer"
+                })
 
                 BCCShopsMainMenu:Open({ startupPage = managePlayerLedger })
             end)
 
             playerManagePage:RegisterElement('button', {
                 label = _U("addRemoveAccess"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 local managePlayerAccess = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerLedger:page')
 
@@ -246,7 +341,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerAccess:RegisterElement('button', {
                     label = _U("giveAccess"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     devPrint("Opening GiveAccessMenu for shopId: " ..
                         tostring(shopId) .. ", shopName: " .. tostring(shopName))
@@ -264,13 +364,20 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                             slot = "header"
                         })
 
-                        giveAccessPage:RegisterElement('line', { slot = "header" })
+                        giveAccessPage:RegisterElement('line', {
+                            slot = "header"
+                        })
 
                         for _, p in ipairs(players) do
                             local label = p.name
                             giveAccessPage:RegisterElement('button', {
                                 label = label,
-                                slot = "content"
+                                slot = "content",
+                                style = {},
+                                sound = {
+                                    action = "SELECT",
+                                    soundset = "RDRO_Character_Creator_Sounds"
+                                }
                             }, function()
                                 devPrint("Giving access to charId: " ..
                                     tostring(p.charId) .. " for shopId: " .. tostring(shopId))
@@ -287,11 +394,18 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                             end)
                         end
 
-                        giveAccessPage:RegisterElement('line', { slot = "footer" })
+                        giveAccessPage:RegisterElement('line', {
+                            slot = "footer"
+                        })
 
                         giveAccessPage:RegisterElement('button', {
                             label = _U('backButton'),
-                            slot = "footer"
+                            slot = "footer",
+                            style = {},
+                            sound = {
+                                action = "SELECT",
+                                soundset = "RDRO_Character_Creator_Sounds"
+                            }
                         }, function()
                             managePlayerAccess:RouteTo()
                         end)
@@ -304,7 +418,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerAccess:RegisterElement('button', {
                     label = _U("removeAccess"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     devPrint("[CLIENT] Requesting access list for shop: " .. shopName)
 
@@ -332,7 +451,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                             accessListPage:RegisterElement("button", {
                                 label = player.firstname ..
                                     " " .. player.lastname .. " (ID: " .. selectedCharacterId .. ")",
-                                slot = "content"
+                                slot = "content",
+                                style = {},
+                                sound = {
+                                    action = "SELECT",
+                                    soundset = "RDRO_Character_Creator_Sounds"
+                                }
                             }, function()
                                 devPrint("[CLIENT] Selected character for removal: " .. selectedCharacterId)
 
@@ -345,7 +469,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                                 removeAccessPage:RegisterElement('button', {
                                     label = _U("yes"),
-                                    slot = "footer"
+                                    slot = "footer",
+                                    style = {},
+                                    sound = {
+                                        action = "SELECT",
+                                        soundset = "RDRO_Character_Creator_Sounds"
+                                    }
                                 }, function()
                                     devPrint("[CLIENT] Confirming removal. Fetching shop info for: " .. shopName)
 
@@ -375,38 +504,74 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                                 removeAccessPage:RegisterElement('button', {
                                     label = _U("no"),
-                                    slot = "footer"
+                                    slot = "footer",
+                                    style = {},
+                                    sound = {
+                                        action = "SELECT",
+                                        soundset = "RDRO_Character_Creator_Sounds"
+                                    }
                                 }, function()
                                     managePlayerAccess:RouteTo()
                                 end)
 
+                                removeAccessPage:RegisterElement('line', {
+                                    slot = "footer"
+                                })
+
                                 removeAccessPage:RegisterElement('button', {
                                     label = _U('backButton'),
-                                    slot = "footer"
+                                    slot = "footer",
+                                    style = {},
+                                    sound = {
+                                        action = "SELECT",
+                                        soundset = "RDRO_Character_Creator_Sounds"
+                                    }
                                 }, function()
                                     OpenStoreMenu(globalNearbyShops)
                                 end)
 
+                                removeAccessPage:RegisterElement('line', {
+                                    slot = "footer"
+                                })
+
                                 BCCShopsMainMenu:Open({ startupPage = removeAccessPage })
                             end)
                         end
-
+                        accessListPage:RegisterElement('line', {
+                            slot = "footer"
+                        })
                         accessListPage:RegisterElement("button", {
                             label = _U('backButton'),
-                            slot = "footer"
+                            slot = "footer",
+                            style = {},
+                            sound = {
+                                action = "SELECT",
+                                soundset = "RDRO_Character_Creator_Sounds"
+                            }
                         }, function()
                             OpenStoreMenu(globalNearbyShops)
                         end)
+
+                        accessListPage:RegisterElement('bottomline', {
+                            slot = "footer"
+                        })
 
                         BCCShopsMainMenu:Open({ startupPage = accessListPage })
                     end)
                 end)
 
-                managePlayerAccess:RegisterElement('line', { slot = "footer" })
+                managePlayerAccess:RegisterElement('line', {
+                    slot = "footer"
+                })
 
                 managePlayerAccess:RegisterElement('button', {
                     label = _U('backButton'),
-                    slot = "footer"
+                    slot = "footer",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     playerManagePage:RouteTo()
                 end)
@@ -418,7 +583,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
             playerManagePage:RegisterElement('button', {
                 label = _U("webhook"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 local managePlayerWebhook = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerWebhook:page')
 
@@ -441,7 +611,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerWebhook:RegisterElement('button', {
                     label = _U("submitWebhook"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     if not webhookValue or webhookValue == "" then
                         Notify(_U("invalidWebhookURL"), "error", 4000)
@@ -467,19 +642,31 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerWebhook:RegisterElement('button', {
                     label = _U('backButton'),
-                    slot = "footer"
+                    slot = "footer",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     playerManagePage:RouteTo()
                 end)
 
-                managePlayerWebhook:RegisterElement('bottomline', { slot = "footer" })
+                managePlayerWebhook:RegisterElement('bottomline', {
+                    slot = "footer"
+                })
 
                 BCCShopsMainMenu:Open({ startupPage = managePlayerWebhook })
             end)
 
             playerManagePage:RegisterElement('button', {
                 label = _U("manageBlip"),
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 local managePlayerBlip = BCCShopsMainMenu:RegisterPage('bcc-shops:managePlayerBlip:page')
 
@@ -490,7 +677,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerBlip:RegisterElement('button', {
                     label = _U("enableBlip"),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     local enableShopBlip = BCCShopsMainMenu:RegisterPage('bcc-shops:enableShopBlip:page')
 
@@ -501,7 +693,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     enableShopBlip:RegisterElement('button', {
                         label = _U("showBlip"),
-                        slot = "content"
+                        slot = "content",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         BccUtils.RPC:Call("bcc-shops:SetShopBlipEnabled", {
                             shopName = shopName,
@@ -521,7 +718,8 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                                 local shop = GetShopByName(shopName)
                                 if shop then
                                     local hash = tonumber(shop.blip_hash) or 1475879922
-                                    local newBlip = BccUtils.Blips:SetBlip(shop.shop_name, hash, 1, shop.pos_x, shop.pos_y, shop.pos_z)
+                                    local newBlip = BccUtils.Blips:SetBlip(shop.shop_name, hash, 1, shop.pos_x,
+                                        shop.pos_y, shop.pos_z)
                                     newBlip.name = shop.shop_name
                                     table.insert(CreatedBlip, newBlip)
                                 end
@@ -530,10 +728,15 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
                             end
                         end)
                     end)
-                    
+
                     enableShopBlip:RegisterElement('button', {
                         label = _U('hideBlip'),
-                        slot = "content"
+                        slot = "content",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         BccUtils.RPC:Call("bcc-shops:SetShopBlipEnabled", {
                             shopName = shopName,
@@ -560,12 +763,19 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     enableShopBlip:RegisterElement('button', {
                         label = _U('backButton'),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         managePlayerBlip:RouteTo()
                     end)
 
-                    enableShopBlip:RegisterElement('bottomline', { slot = "footer" })
+                    enableShopBlip:RegisterElement('bottomline', {
+                        slot = "footer"
+                    })
 
                     BCCShopsMainMenu:Open({ startupPage = enableShopBlip })
                 end)
@@ -573,7 +783,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerBlip:RegisterElement('button', {
                     label = _U('changeBlip'),
-                    slot = "content"
+                    slot = "content",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     local changeShopBlip = BCCShopsMainMenu:RegisterPage('bcc-shops:changeShopBlip:page')
 
@@ -594,7 +809,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                         changeShopBlip:RegisterElement('button', {
                             html = html,
-                            slot = "content"
+                            slot = "content",
+                            style = {},
+                            sound = {
+                                action = "SELECT",
+                                soundset = "RDRO_Character_Creator_Sounds"
+                            }
                         }, function()
                             selectedBlipHash = blip.blipHash
                             devPrint("Selected Blip: " .. blip.label)
@@ -637,7 +857,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                     changeShopBlip:RegisterElement('button', {
                         label = _U('backButton'),
-                        slot = "footer"
+                        slot = "footer",
+                        style = {},
+                        sound = {
+                            action = "SELECT",
+                            soundset = "RDRO_Character_Creator_Sounds"
+                        }
                     }, function()
                         managePlayerBlip:RouteTo()
                     end)
@@ -653,7 +878,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
                 managePlayerBlip:RegisterElement('button', {
                     label = _U('backButton'),
-                    slot = "footer"
+                    slot = "footer",
+                    style = {},
+                    sound = {
+                        action = "SELECT",
+                        soundset = "RDRO_Character_Creator_Sounds"
+                    }
                 }, function()
                     playerbuySellPage:RouteTo()
                 end)
@@ -669,7 +899,12 @@ function OpenPlayerStoreMenu(shopId, shopName, invLimit, ledger, isOwner, hasAcc
 
             playerManagePage:RegisterElement('button', {
                 label = _U('backButton'),
-                slot = "footer"
+                slot = "footer",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
                 playerbuySellPage:RouteTo()
             end)
@@ -768,7 +1003,12 @@ function OpenCreatePlayerStoreMenu(players, storeDetails)
 
     createPlayerStorePage:RegisterElement('button', {
         label = _U('setCoordinates'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         local playerPed = PlayerPedId()
         local coords = GetEntityCoords(playerPed)
@@ -783,9 +1023,19 @@ function OpenCreatePlayerStoreMenu(players, storeDetails)
         devPrint("Coordinates & Heading set: " .. tostring(coords) .. " Heading: " .. heading)
     end)
 
+    createPlayerStorePage:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
+
     createPlayerStorePage:RegisterElement('button', {
         label = _U('create'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if shopName ~= '' and storeDetails.ownerId ~= '' then
             storeDetails.shopName = shopName
@@ -811,10 +1061,20 @@ function OpenCreatePlayerStoreMenu(players, storeDetails)
 
     createPlayerStorePage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenCreateStoreMenu(players)
     end)
+
+    createPlayerStorePage:RegisterElement('bottomline', {
+        slot = "footer",
+        style = {}
+    })
 
     BCCShopsMainMenu:Open({
         startupPage = createPlayerStorePage
@@ -849,7 +1109,12 @@ function SelectOwner(players)
 
     playerListPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenCreateStoreMenu(players)
     end)
@@ -875,21 +1140,41 @@ function OpenAddPlayerItemDetailMenu(shopName, item)
 
     addItemMenu:RegisterElement('button', {
         label = _U('addToBuyInventory'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenAddPlayerItemDetailMenuWithDetails(shopName, item, 'buy')
     end)
 
     addItemMenu:RegisterElement('button', {
         label = _U('addToSellInventory'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenAddPlayerItemDetailMenuWithDetails(shopName, item, 'sell')
     end)
 
+    addItemMenu:RegisterElement('line', {
+        slot = "footer",
+        style = {}
+    })
+
     addItemMenu:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenAddPlayerItemMenu(shopName)
     end)
@@ -905,60 +1190,111 @@ function OpenAddPlayerItemDetailMenu(shopName, item)
 end
 
 function OpenPlayerInventoryMenu(shopName, inventory, weapons)
-    devPrint("Opening inventory menu for shop: " .. shopName)
+    devPrint("Opening inventory menu for shop: " .. tostring(shopName))
 
     local addItemPage = BCCShopsMainMenu:RegisterPage('bcc-shops:player:additems')
     addItemPage:RegisterElement('header', { value = _U('inventory'), slot = "header" })
     addItemPage:RegisterElement('line', { slot = "header", style = {} })
 
-    -- Combine inventory items
+    -- Build a single imagebox grid with both items and weapons
+    local imageBoxItems = {}
+    local combinedRows  = {}
+    local idx           = 0
+
+    -- Inventory items
     for _, item in ipairs(inventory or {}) do
-        local itemName = item.item_name or "unknown_item"
-        local label = item.label or _U('unknown')
-        local count = item.count or 0
-        local imgPath = 'nui://vorp_inventory/html/img/items/' .. itemName .. '.png'
+        local itemName    = (item.item_name or "unknown_item"):lower()
+        local label       = item.label or _U('unknown')
+        local count       = item.count or 0
+        local imgPath     = 'nui://vorp_inventory/html/img/items/' .. itemName .. '.png'
 
-        local html = string.format([[
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px;">
-                <img src="%s" style="height: 40px; width: 40px; margin-right: 10px;">
-                <span style="flex-grow: 1; text-align: center; font-size: 1.0vw;">%s</span>
-                <span style="font-size: 0.9vw; opacity: 0.7;">x%s</span>
-            </div>
-        ]], imgPath, label, count)
+        idx               = idx + 1
+        combinedRows[idx] = {
+            is_weapon = 0,
+            item_name = itemName,
+            label     = label,
+            name      = itemName,
+            count     = count,
+            original  = item, -- keep full reference if needed downstream
+        }
 
-        addItemPage:RegisterElement('button', {
-            html = html,
-            slot = "content"
-        }, function()
-            devPrint("Clicked inventory item: " .. label)
-            OpenAddPlayerItemDetailMenu(shopName, item)
-        end)
+        table.insert(imageBoxItems, {
+            type  = "imagebox",
+            index = idx,
+            data  = {
+                img      = imgPath,
+                label    = "x" .. tostring(count),
+                tooltip  = label,
+                style    = { margin = "5px" },
+                disabled = (count <= 0),
+                sound    = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+            }
+        })
     end
 
-    -- Add weapons
+    -- Weapons
     for _, weapon in ipairs(weapons or {}) do
-        local itemName = weapon.name or "unknown_weapon"
-        local label = weapon.custom_label or weapon.label or _U('unknown')
-        local serial = weapon.serial_number or "N/A"
-        local imgPath = 'nui://vorp_inventory/html/img/items/' .. itemName .. '.png'
+        local itemName    = (weapon.name or "unknown_weapon"):lower()
+        local label       = weapon.custom_label or weapon.label or _U('unknown')
+        local serial      = weapon.serial_number or "N/A"
+        local imgPath     = 'nui://vorp_inventory/html/img/items/' .. itemName .. '.png'
 
-        local html = string.format([[
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px;">
-                <img src="%s" style="height: 40px; width: 40px; margin-right: 10px;">
-                <span style="flex-grow: 1; text-align: center; font-size: 1.0vw;">%s</span>
-                <span style="font-size: 0.7vw; opacity: 0.5;">🔫 Serial: %s</span>
-            </div>
-        ]], imgPath, label, serial)
+        idx               = idx + 1
+        combinedRows[idx] = {
+            is_weapon     = 1,
+            item_name     = itemName,
+            label         = label,
+            name          = itemName,
+            serial_number = serial,
+            original      = weapon,
+        }
 
-        weapon.is_weapon = 1 ---set to 1 aka true
-        weapon.item_name = itemName
+        table.insert(imageBoxItems, {
+            type  = "imagebox",
+            index = idx,
+            data  = {
+                img      = imgPath,
+                label    = "🔫",
+                tooltip  = label,
+                style    = {
+                    margin = "5px"
+                },
+                disabled = false,
+                sound    = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
+            }
+        })
+    end
 
-        addItemPage:RegisterElement('button', {
-            html = html,
-            slot = "content"
-        }, function()
-            devPrint("Clicked weapon: " .. label .. " [" .. serial .. "]")
-            OpenAddPlayerItemDetailMenu(shopName, weapon)
+    if #imageBoxItems == 0 then
+        addItemPage:RegisterElement("text", {
+            value = _U('shop_no_items_found'),
+            style = {
+                fontSize = "16px",
+                color = "#bbb",
+                textAlign = "center",
+                marginTop = "10px"
+            },
+            slot  = "content"
+        })
+    else
+        addItemPage:RegisterElement('imageboxcontainer', {
+            slot  = "content",
+            items = imageBoxItems
+        }, function(data)
+            local chosen = combinedRows[data.child.index]
+            if not chosen then return end
+
+            -- Rehydrate the payload expected by detail menu
+            local payload = chosen.original or {}
+            payload.is_weapon = chosen.is_weapon
+            payload.item_name = chosen.item_name -- ensure consistent field
+
+            devPrint(("Clicked %s: %s"):format(chosen.is_weapon == 1 and "weapon" or "item",
+                chosen.label or chosen.item_name))
+            OpenAddPlayerItemDetailMenu(shopName, payload)
         end)
     end
 
@@ -969,7 +1305,12 @@ function OpenPlayerInventoryMenu(shopName, inventory, weapons)
 
     addItemPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot  = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         devPrint("Back button clicked, returning to store menu")
         OpenPlayerBuySellMenu(shopName)
@@ -980,20 +1321,22 @@ function OpenPlayerInventoryMenu(shopName, inventory, weapons)
         style = {}
     })
 
-    BCCShopsMainMenu:Open({
-        startupPage = addItemPage
-    })
+    BCCShopsMainMenu:Open({ startupPage = addItemPage })
 end
 
 function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
-    devPrint("Opening item detail menu for item: " .. (item.label or "Unknown Item") .. ", Action: " .. actionType)
+    devPrint("Opening item detail menu for item: " ..
+        (item.label or "Unknown Item") .. ", Action: " .. tostring(actionType))
 
     local categories = BccUtils.RPC:CallAsync("bcc-shops:GetShopCategories")
     local categoryOptions = {}
-
     if categories and #categories > 0 then
         for _, cat in ipairs(categories) do
-            table.insert(categoryOptions, { text = cat.text or cat.label or "unknown", value = tostring(cat.value) })
+            categoryOptions[#categoryOptions + 1] = {
+                text = cat.text or cat.label or "unknown",
+                value = tostring(cat
+                    .value)
+            }
         end
     else
         Notify("No categories found in database!", "error", 4000)
@@ -1004,43 +1347,72 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
 
     local itemName           = item.item_name or "unknown_item"
     local itemLabel          = item.label or _U("unknownItem")
-    local inputPrice         = (actionType == 'buy' and item.buy_price or item.sell_price) or 0
+    local inputPrice         = ((actionType == 'buy') and item.buy_price or item.sell_price) or 0
     local inputQuantity      = 1
-    local selectedCategoryId = tostring(item.category_id or "") -- default selection
+    local selectedCategoryId = tostring(item.category_id or "")
 
-    itemDetailPage:RegisterElement('header', {
-        value = itemLabel,
-        slot = "header"
+    itemDetailPage:RegisterElement('header', { value = itemLabel, slot = "header" })
+    itemDetailPage:RegisterElement('line', { slot = "header" })
+
+itemDetailPage:RegisterElement('input', {
+    label   = (actionType == 'buy' and _U('buyPrice') or _U('sellPrice')),
+    slot    = "content",
+    type    = "number",
+    default = inputPrice,
+    min     = 0
+}, function(data)
+    inputPrice = tonumber(data.value) or inputPrice
+    devPrint("Updated Price: " .. inputPrice)
+end)
+
+-- Resolve the right caps table (supports both ConfigItems and Config)
+local capsTable = nil
+if actionType == 'buy' then
+    if ConfigItems and ConfigItems.MaxBuyPrice then
+        capsTable = ConfigItems.MaxBuyPrice
+    elseif Config and (Config.itemsBuyPrice or Config.MaxBuyPrice) then
+        capsTable = Config.itemsBuyPrice or Config.MaxBuyPrice
+    end
+elseif actionType == 'sell' then
+    if ConfigItems and ConfigItems.MaxSellPrice then
+        capsTable = ConfigItems.MaxSellPrice
+    elseif Config and (Config.itemsSellPrice or Config.MaxSellPrice) then
+        capsTable = Config.itemsSellPrice or Config.MaxSellPrice
+    end
+end
+
+local maxPrice = capsTable and capsTable[itemName] or nil
+devPrint("Max cap lookup for item '" .. itemName .. "' (" .. tostring(actionType) .. "): " .. tostring(maxPrice))
+
+if maxPrice ~= nil then
+    itemDetailPage:RegisterElement('textdisplay', {
+        value = ((actionType == 'buy') and _U('maxBuyPrice') or _U('maxSellPrice')) .. ": " .. tostring(maxPrice),
+        slot  = "content",
+        style = { color = "#888", fontSize = "14px", marginBottom = "5px" }
     })
-    itemDetailPage:RegisterElement('line', {
-        slot = "header"
-    })
+else
+    -- Optional: show that no cap is configured
+    -- itemDetailPage:RegisterElement('textdisplay', {
+    --     value = _U('noMaxPriceConfigured'),
+    --     slot  = "content",
+    --     style = { color = "#888", fontSize = "14px", marginBottom = "5px" }
+    -- })
+end
 
     itemDetailPage:RegisterElement('input', {
-        label = (actionType == 'buy' and _U('buyPrice') or _U('sellPrice')),
-        slot = "content",
-        type = "number",
-        default = inputPrice,
-        min = 0
-    }, function(data)
-        inputPrice = tonumber(data.value) or inputPrice
-        devPrint("Updated Price: " .. inputPrice)
-    end)
-
-    itemDetailPage:RegisterElement('input', {
-        label = _U('storeQty'),
-        slot = "content",
-        type = "number",
+        label   = _U('storeQty'),
+        slot    = "content",
+        type    = "number",
         default = inputQuantity,
-        min = 1
+        min     = 1
     }, function(data)
         inputQuantity = tonumber(data.value) or 1
         devPrint("Updated Quantity: " .. inputQuantity)
     end)
 
     itemDetailPage:RegisterElement('dropdown', {
-        label = _U('category'),
-        slot = "content",
+        label   = _U('category'),
+        slot    = "content",
         options = categoryOptions,
         default = selectedCategoryId
     }, function(data)
@@ -1048,21 +1420,40 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
         devPrint("Selected category_id: " .. selectedCategoryId)
     end)
 
+    itemDetailPage:RegisterElement('line', { slot = "footer", style = {} })
+
     itemDetailPage:RegisterElement('button', {
         label = _U('submit'),
-        slot = "footer"
+        slot  = "footer",
+        style = {},
+        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
     }, function()
+        -- sanitize
+        inputQuantity = tonumber(inputQuantity) or 0
+        inputPrice    = tonumber(inputPrice) or 0
+
         if inputQuantity <= 0 then
-            devPrint("Invalid quantity: " .. inputQuantity)
+            devPrint("Invalid quantity: " .. tostring(inputQuantity))
             Notify(_U('invalidQuantity'), "error", 4000)
             return
         end
-        if inputPrice > MAX_SELL_PRICE then
-            devPrint("Entered price exceeds maximum limit: " .. inputPrice)
+
+        -- pick the right cap table based on action
+        local capsTable
+        if actionType == 'buy' then
+            capsTable = ConfigItems.MaxBuyPrice
+        elseif actionType == 'sell' then
+            capsTable = ConfigItems.MaxSellPrice
+        end
+
+        local maxPrice = capsTable and capsTable[itemName] or nil
+        if maxPrice and inputPrice > maxPrice then
+            devPrint("Entered price " .. inputPrice .. " exceeds maximum for " .. itemName .. " (" .. maxPrice .. ")")
             Notify(_U('price_limit_exceeded'), "error", 4000)
             return
         end
-        -- Weapon-specific handling
+
+        -- Weapon handling
         if item.is_weapon == 1 then
             local weaponPayload = {
                 shopName      = shopName,
@@ -1105,10 +1496,10 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
             devPrint("Adding buy item: " .. json.encode(payload))
             BccUtils.RPC:Call("bcc-shops:AddBuyItem", payload, function(success)
                 if success then
-                    Notify(_U("buyItemAdded"), "success", 4000)
+                    Notify(_U("itemAddedSuccess"), "success", 4000)
                     BCCShopsMainMenu:Close()
                 else
-                    Notify(_U("buyItemAddFail"), "error", 4000)
+                    Notify(_U("itemAddedFail"), "error", 4000)
                 end
             end)
         else
@@ -1116,10 +1507,10 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
             devPrint("Adding sell item: " .. json.encode(payload))
             BccUtils.RPC:Call("bcc-shops:AddSellItem", payload, function(success)
                 if success then
-                    Notify(_U("sellItemAdded"), "success", 4000)
+                    Notify(_U("itemAddedSuccess"), "success", 4000)
                     BCCShopsMainMenu:Close()
                 else
-                    Notify(_U("sellItemAddFail"), "error", 4000)
+                    Notify(_U("itemAddedFail"), "error", 4000)
                 end
             end)
         end
@@ -1127,11 +1518,14 @@ function OpenAddPlayerItemDetailMenuWithDetails(shopName, item, actionType)
 
     itemDetailPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot  = "footer",
+        style = {},
+        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
     }, function()
         OpenAddPlayerItemDetailMenu(shopName, item)
     end)
 
+    itemDetailPage:RegisterElement('bottomline', { slot = "footer", style = {} })
     BCCShopsMainMenu:Open({ startupPage = itemDetailPage })
 end
 
@@ -1183,7 +1577,10 @@ function OpenRemovePlayerItemMenu(shopName)
             value = _U("removeItemFrom") .. shopName,
             slot = "header"
         })
-        removeItemPage:RegisterElement("line", { slot = "header", style = {} })
+        removeItemPage:RegisterElement("line", {
+            slot = "header",
+            style = {}
+        })
 
         removeItemPage:RegisterElement("subheader", {
             value = (type == "weapon" and "🔫 " or "🔹 ") .. categoryLabel,
@@ -1212,9 +1609,15 @@ function OpenRemovePlayerItemMenu(shopName)
 
             removeItemPage:RegisterElement("button", {
                 html = html,
-                slot = "content"
+                slot = "content",
+                style = {},
+                sound = {
+                    action = "SELECT",
+                    soundset = "RDRO_Character_Creator_Sounds"
+                }
             }, function()
-                RequestRemoveQuantity(shopName, itemName, entry.buy_quantity, entry.sell_quantity, entry.price, entry.sell_price, type == "weapon")
+                RequestRemoveQuantity(shopName, itemName, entry.buy_quantity, entry.sell_quantity, entry.price,
+                    entry.sell_price, type == "weapon")
             end)
         end
 
@@ -1222,7 +1625,11 @@ function OpenRemovePlayerItemMenu(shopName)
             slot = "footer",
             total = totalPages,
             current = currentPage,
-            style = {}
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function(data)
             if data.value == "forward" then
                 currentPage = math.min(currentPage + 1, totalPages)
@@ -1232,14 +1639,26 @@ function OpenRemovePlayerItemMenu(shopName)
             renderPage()
         end)
 
-        removeItemPage:RegisterElement("line", { slot = "footer", style = {} })
+        removeItemPage:RegisterElement("line", {
+            slot = "footer",
+            style = {}
+        })
+
         removeItemPage:RegisterElement("button", {
             label = _U("backButton"),
-            slot = "footer"
+            slot = "footer",
+            style = {},
+            sound = {
+                action = "SELECT",
+                soundset = "RDRO_Character_Creator_Sounds"
+            }
         }, function()
             OpenPlayerBuySellMenu(shopName)
         end)
-        removeItemPage:RegisterElement("bottomline", { slot = "footer", style = {} })
+        removeItemPage:RegisterElement("bottomline", {
+            slot = "footer",
+            style = {}
+        })
 
         BCCShopsMainMenu:Open({ startupPage = removeItemPage })
     end
@@ -1299,7 +1718,12 @@ function RequestRemoveQuantity(shopName, itemName, maxBuyQuantity, maxSellQuanti
 
     inputPage:RegisterElement('button', {
         label = _U("removeForBuy"),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if quantity <= maxBuyQuantity then
             BccUtils.RPC:Call("bcc-shops:RemoveShopItem", {
@@ -1323,7 +1747,12 @@ function RequestRemoveQuantity(shopName, itemName, maxBuyQuantity, maxSellQuanti
 
     inputPage:RegisterElement('button', {
         label = _U("removeForSell"),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if quantity <= maxSellQuantity then
             BccUtils.RPC:Call("bcc-shops:RemoveShopItem", {
@@ -1347,7 +1776,12 @@ function RequestRemoveQuantity(shopName, itemName, maxBuyQuantity, maxSellQuanti
 
     inputPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenRemovePlayerItemMenu(shopName)
     end)
@@ -1394,7 +1828,12 @@ function OpenAddItemMenu(shopName, item, inventoryType)
 
     addItemPage:RegisterElement('button', {
         label = _U('addItem'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         if inventoryType == "buy" then
             devPrint("Triggering addBuyItem with itemName: " .. tostring(item.item_name))
@@ -1405,7 +1844,7 @@ function OpenAddItemMenu(shopName, item, inventoryType)
                 quantity = quantity,
                 buyPrice = price,
                 category = item.category,
-                --levelRequired = item.category
+                levelRequired = item.level_required
             }, function(success)
                 if success then
                     devPrint("Item successfully added")
@@ -1438,7 +1877,12 @@ function OpenAddItemMenu(shopName, item, inventoryType)
 
     addItemPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenAddPlayerItemDetailMenu(shopName, item)
     end)
@@ -1461,14 +1905,24 @@ function OpenAddItemSelectionMenu(storeName)
 
     addItemPage:RegisterElement('button', {
         label = _U('addItemsToBuy'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenAddPlayerItemDetailMenu(storeName, "buy")
     end)
 
     addItemPage:RegisterElement('button', {
         label = _U('addItemsToSell'),
-        slot = "content"
+        slot = "content",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenAddPlayerItemDetailMenu(storeName, "sell")
     end)
@@ -1480,7 +1934,12 @@ function OpenAddItemSelectionMenu(storeName)
 
     addItemPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer"
+        slot = "footer",
+        style = {},
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
+        }
     }, function()
         OpenBuyMenu(storeName, "player")
     end)

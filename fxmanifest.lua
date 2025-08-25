@@ -6,12 +6,14 @@ lua54 'yes'
 
 author '@iseeyoucopy'
 description 'Advanced NPC and Player Shops System for RedM'
-version '1.1.1'
+version '1.2.0'
 
 shared_scripts {
     'config.lua',
     'shared/locale.lua',
     'languages/*.lua',
+    'itemsMaxBuyPriceConfig.lua',
+    'itemsMaxSellPriceConfig.lua'
 }
 
 client_scripts {

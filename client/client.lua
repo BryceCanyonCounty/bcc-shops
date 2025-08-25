@@ -1,6 +1,4 @@
 
-local MAX_SELL_PRICE = Config.MAX_SELL_PRICE
-
 VORPcore = exports.vorp_core:GetCore()
 BccUtils = exports['bcc-utils'].initiate()
 FeatherMenu = exports['feather-menu'].initiate()

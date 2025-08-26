@@ -48,12 +48,15 @@ function OpenInitialManageMenu(stores, players)
                     devPrint("✅ NPC shops refreshed: " .. #npcShops)
 
                     -- Open NPC List Page
-                    local npcListPage = BCCShopsMainMenu:RegisterPage("bcc-shops:listnpcstores")
-                    npcListPage:RegisterElement("header", { value = _U("npcStores"), slot = "header" })
+                    Pages.npcListPage = BCCShopsMainMenu:RegisterPage("bcc-shops:listnpcstores")
+                    Pages.npcListPage:RegisterElement("header", { 
+                        value = _U("npcStores"), 
+                        slot = "header" 
+                    })
 
                     for _, shop in ipairs(npcShops) do
-                        local label = (shop.shop_label or shop.shop_name) .. " [" .. shop.shop_name .. "]"
-                        npcListPage:RegisterElement("button", {
+                        local label = (shop.shop_label or shop.shop_name)
+                        Pages.npcListPage:RegisterElement("button", {
                             label = label,
                             slot = "content",
                             style = {},
@@ -62,11 +65,16 @@ function OpenInitialManageMenu(stores, players)
                                 soundset = "RDRO_Character_Creator_Sounds"
                             }
                         }, function()
-                            OpenEditShopPage(shop)
+                            OpenEditNPCShopPage(shop)
                         end)
                     end
 
-                    npcListPage:RegisterElement("button", {
+                    Pages.npcListPage:RegisterElement("line", {
+                        slot = "footer",
+                        style = {}
+                    })
+
+                    Pages.npcListPage:RegisterElement("button", {
                         label = _U("backButton"),
                         slot = "footer",
                         style = {},
@@ -78,7 +86,12 @@ function OpenInitialManageMenu(stores, players)
                         Pages.initialManageStores:RouteTo()
                     end)
 
-                    BCCShopsMainMenu:Open({ startupPage = npcListPage })
+                    Pages.npcListPage:RegisterElement("bottomline", {
+                        slot = "footer",
+                        style = {}
+                    })
+
+                    BCCShopsMainMenu:Open({ startupPage = Pages.npcListPage })
                 else
                     devPrint("⚠️ No NPC shops returned.")
                 end
@@ -101,10 +114,13 @@ function OpenInitialManageMenu(stores, players)
 
                     -- Open Player List Page
                     Pages.playerListPage = BCCShopsMainMenu:RegisterPage("bcc-shops:listplayerstores")
-                    Pages.playerListPage:RegisterElement("header", { value = _U("playerStores"), slot = "header" })
+                    Pages.playerListPage:RegisterElement("header", { 
+                        value = _U("playerStores"),
+                        slot = "header"
+                    })
 
                     for _, shop in ipairs(playerShops) do
-                        local label = (shop.shop_label or shop.shop_name) .. " [" .. shop.shop_name .. "]"
+                        local label = (shop.shop_label or shop.shop_name)
                         Pages.playerListPage:RegisterElement("button", {
                             label = label,
                             slot = "content",
@@ -114,9 +130,15 @@ function OpenInitialManageMenu(stores, players)
                                 soundset = "RDRO_Character_Creator_Sounds"
                             }
                         }, function()
-                            OpenEditShopPage(shop)
+                            OpenEditPlayerShopPage(shop)
                         end)
                     end
+
+                    Pages.playerListPage:RegisterElement("line", {
+                        slot = "footer",
+                        style = {}
+                    })
+
                     Pages.playerListPage:RegisterElement("button", {
                         label = _U("backButton"),
                         slot = "footer",
@@ -128,6 +150,11 @@ function OpenInitialManageMenu(stores, players)
                     }, function()
                         Pages.initialManageStores:RouteTo()
                     end)
+
+                    Pages.playerListPage:RegisterElement("bottomline", {
+                        slot = "footer",
+                        style = {}
+                    })
 
                     BCCShopsMainMenu:Open({ startupPage = Pages.playerListPage })
                 else
@@ -666,11 +693,11 @@ function OpenEditCategoryMenu()
 
     Pages.editCatPage:RegisterElement('button', {
         label = _U('backButton'),
-        slot = "footer",        
+        slot = "footer",
         style = {},
-        sound = { 
-            action = "SELECT", 
-            soundset = "RDRO_Character_Creator_Sounds" 
+        sound = {
+            action = "SELECT",
+            soundset = "RDRO_Character_Creator_Sounds"
         }
     }, function()
         Pages.CategoryPage:RouteTo()
@@ -684,8 +711,8 @@ function OpenEditCategoryMenu()
     BCCShopsMainMenu:Open({ startupPage = Pages.editCatPage })
 end
 
-function OpenEditShopPage(shop)
-    Pages.editPage = BCCShopsMainMenu:RegisterPage("bcc-shops:editshop_" .. shop.shop_id)
+function OpenEditNPCShopPage(shop)
+    Pages.editPage = BCCShopsMainMenu:RegisterPage("bcc-shops:editnpcshop_" .. shop.shop_id)
     Pages.editPage:RegisterElement("header", {
         value = _U("editShopHeader"),
         slot = "header"
@@ -711,46 +738,102 @@ function OpenEditShopPage(shop)
             default = tostring(shop[field.key] or ""),
             slot = "content"
         }, function(value)
-            edits[field.key] = value.value or value -- FIX HERE
+            edits[field.key] = value.value or value
         end)
     end
 
-    -- Submit changes
+    Pages.editPage:RegisterElement("line", { slot = "footer" })
+
     Pages.editPage:RegisterElement("button", {
         label = _U("submitChanges"),
         slot = "footer",
-        style = {},
-        sound = {
-            action = "SELECT",
-            soundset = "RDRO_Character_Creator_Sounds"
-        }
+        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
     }, function()
-        edits.shopId = shop.shop_id
-        edits.shop_type = shop.shop_type -- optional, in case you log or display type
+        edits.shopId   = shop.shop_id
+        edits.shop_type = shop.shop_type
 
         BccUtils.RPC:Call("bcc-shops:EditShop", edits, function(success)
             if success then
                 Notify(_U("itemUpdated"), "success", 4000)
-                Pages.CategoryPage:RouteTo()
+                Pages.npcListPage:RouteTo()
             else
                 Notify(_U("itemUpdatedFail"), "error", 4000)
             end
         end)
     end)
 
-    -- Back button
     Pages.editPage:RegisterElement("button", {
         label = _U("backButton"),
         slot = "footer",
-        style = {},
-        sound = {
-            action = "SELECT",
-            soundset = "RDRO_Character_Creator_Sounds"
-        }
+        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
     }, function()
-        Pages.CategoryPage:RouteTo()
+        Pages.npcListPage:RouteTo()
     end)
 
+    Pages.editPage:RegisterElement("bottomline", { slot = "footer" })
+    BCCShopsMainMenu:Open({ startupPage = Pages.editPage })
+end
+
+function OpenEditPlayerShopPage(shop)
+    Pages.editPage = BCCShopsMainMenu:RegisterPage("bcc-shops:editplayershop_" .. shop.shop_id)
+    Pages.editPage:RegisterElement("header", {
+        value = _U("editShopHeader"),
+        slot = "header"
+    })
+
+    local fields = {
+        { key = "shop_name",     label = _U("editShopName") },
+        { key = "shop_location", label = _U("editShopLocation") },
+        { key = "inv_limit",     label = _U("editInventoryLimit") },
+        { key = "webhook_link",  label = _U("editWebhookLink") },
+        { key = "ledger",        label = _U("editLedgerAmount") },
+        { key = "blip_hash",     label = _U("editBlipHash") },
+        { key = "npc_model",     label = _U("editNPCModel") },
+        { key = "show_blip",     label = _U("editShowBlip") },
+    }
+
+    local edits = {}
+
+    for _, field in ipairs(fields) do
+        Pages.editPage:RegisterElement("input", {
+            label = field.label,
+            placeholder = tostring(shop[field.key] or ""),
+            default = tostring(shop[field.key] or ""),
+            slot = "content"
+        }, function(value)
+            edits[field.key] = value.value or value
+        end)
+    end
+
+    Pages.editPage:RegisterElement("line", { slot = "footer" })
+
+    Pages.editPage:RegisterElement("button", {
+        label = _U("submitChanges"),
+        slot = "footer",
+        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+    }, function()
+        edits.shopId   = shop.shop_id
+        edits.shop_type = shop.shop_type
+
+        BccUtils.RPC:Call("bcc-shops:EditShop", edits, function(success)
+            if success then
+                Notify(_U("itemUpdated"), "success", 4000)
+                Pages.playerListPage:RouteTo()
+            else
+                Notify(_U("itemUpdatedFail"), "error", 4000)
+            end
+        end)
+    end)
+
+    Pages.editPage:RegisterElement("button", {
+        label = _U("backButton"),
+        slot = "footer",
+        sound = { action = "SELECT", soundset = "RDRO_Character_Creator_Sounds" }
+    }, function()
+        Pages.playerListPage:RouteTo()
+    end)
+
+    Pages.editPage:RegisterElement("bottomline", { slot = "footer" })
     BCCShopsMainMenu:Open({ startupPage = Pages.editPage })
 end
 

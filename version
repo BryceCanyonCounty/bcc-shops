@@ -1,2 +1,3 @@
-<1.2.1>
-See GitHub for Details!
+<1.2.2>
+- fix(sell): move sold items into shop stock
+- update readme

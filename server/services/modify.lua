@@ -348,21 +348,27 @@ BccUtils.RPC:Register("bcc-shops:SellItem", function(params, cb, src)
             Character.addCurrency(0, params.total)
             devPrint("Gave player money (ledger deducted):", params.total)
 
+            -- move stock: sell_quantity -= qty, buy_quantity += qty
             MySQL.update.await(
-                "UPDATE bcc_shop_items SET sell_quantity = sell_quantity - ? WHERE shop_id = ? AND item_name = ?", {
-                    params.quantity, shopId, params.itemName
-                })
-            MySQL.update.await("UPDATE bcc_shops SET ledger = ledger - ? WHERE shop_id = ?", {
-                params.total, shopId
-            })
+                "UPDATE bcc_shop_items " ..
+                "SET sell_quantity = GREATEST(sell_quantity - ?, 0), " ..
+                "    buy_quantity  = buy_quantity + ? " ..
+                "WHERE shop_id = ? AND item_name = ?",
+                { params.quantity, params.quantity, shopId, params.itemName }
+            )
+
+            MySQL.update.await("UPDATE bcc_shops SET ledger = ledger - ? WHERE shop_id = ?", { params.total, shopId })
         else
             Character.addCurrency(0, params.total)
             devPrint("Gave player money (npc shop):", params.total)
 
             MySQL.update.await(
-                "UPDATE bcc_shop_items SET sell_quantity = sell_quantity - ? WHERE shop_id = ? AND item_name = ?", {
-                    params.quantity, shopId, params.itemName
-                })
+                "UPDATE bcc_shop_items " ..
+                "SET sell_quantity = GREATEST(sell_quantity - ?, 0), " ..
+                "    buy_quantity  = buy_quantity + ? " ..
+                "WHERE shop_id = ? AND item_name = ?",
+                { params.quantity, params.quantity, shopId, params.itemName }
+            )
         end
 
         NotifyClient(src,

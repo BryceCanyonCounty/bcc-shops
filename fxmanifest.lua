@@ -6,7 +6,7 @@ lua54 'yes'
 
 author '@iseeyoucopy'
 description 'Advanced NPC and Player Shops System for RedM'
-version '1.2.1'
+version '1.2.2'
 
 shared_scripts {
     'config.lua',
